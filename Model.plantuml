@@ -1,0 +1,234 @@
+@startuml
+
+title __MODEL's Class Diagram__\n
+
+  namespace Model {
+    class Model.BuyLog {
+        ~ boughtProducts : ArrayList<Product>
+        ~ off : float
+        ~ purchaseMoney : float
+        - date : Date
+        - logId : String
+    }
+  }
+  
+
+  namespace Model {
+    class Model.Buyer {
+        ~ email : String
+        ~ firstName : String
+        ~ lastName : String
+        ~ password : String
+        ~ phoneNumber : String
+        ~ userName : String
+        - arrayProduct : ArrayList<Product>
+        + Buyer()
+    }
+  }
+  
+
+  namespace Model {
+    class Model.Cart {
+        - id : String
+        - productsInCart : ArrayList<Product>
+    }
+  }
+  
+
+  namespace Model {
+    class Model.Category {
+        - arrayCategory : ArrayList<Category>
+        - arrayProduct : ArrayList<Product>
+        - name : String
+        - specialAttributesForCategory : ArrayList<String>
+        - subCategory : ArrayList
+        + Category()
+    }
+  }
+  
+
+  namespace Model {
+    class Model.Comments {
+        - DidTheCommenterBuyTheProduct : Boolean
+        - messages : String
+    }
+  }
+  
+
+  namespace Model {
+    class Model.Manager {
+        ~ email : String
+        ~ firstName : String
+        ~ lastName : String
+        ~ password : String
+        ~ phoneNumber : String
+        ~ userName : String
+        - arrayProduct : ArrayList<Product>
+        - managers : ArrayList<Manager>
+        + Manager()
+    }
+  }
+  
+
+  namespace Model {
+    class Model.Off {
+        - offAmount : int
+        {static} - offArray : ArrayList<Off>
+        - offId : String
+        - productsArray : ArrayList<Product>
+        - startDate : Date
+        - stopDate : Date
+        + Off()
+        {static} + getOffById()
+        {static} + offFunction()
+    }
+  }
+  
+
+  namespace Model {
+    class Model.OffWithCode {
+        ~ applyingAccounts : ArrayList<User>
+        - numberOfUsersOfCode : int
+        - offAmount : int
+        - offCode : String
+        - startDate : Date
+        - stopDate : Date
+        + OffWithCode()
+        + addAccountToDiscount()
+        + exitAccount()
+        {static} + getOffByCode()
+        {static} + giveOffCodeToSb()
+        {static} + offWithCode()
+    }
+  }
+  
+
+  namespace Model {
+    class Model.Product {
+        - averageOfScore : float
+        - brand : String
+        - comments : ArrayList<String>
+        - existence : Boolean
+        - explanation : String
+        - name : String
+        - price : float
+        - productId : String
+        - specialAttributes : HashMap<String, String>
+        + Product()
+        {static} + compare2Products()
+        {static} + getProductByName()
+    }
+  }
+  
+
+  namespace Model {
+    class Model.Request {
+        + requests : ArrayList<Request>
+        - id : String
+        {static} + getRequestsById()
+        {static} + showAllRequests()
+        + showDetails()
+    }
+  }
+  
+
+  namespace Model {
+    class Model.Score {
+        - score : ArrayList<Float>
+    }
+  }
+  
+
+  namespace Model {
+    class Model.SellLog {
+        ~ boughtProducts : ArrayList<Product>
+        ~ off : float
+        ~ purchaseMoney : float
+        - date : Date
+        - logId : String
+    }
+  }
+  
+
+  namespace Model {
+    class Model.Seller {
+        ~ email : String
+        ~ firstName : String
+        ~ lastName : String
+        ~ password : String
+        ~ phoneNumber : String
+        ~ userName : String
+        - arrayProduct : ArrayList<Product>
+        - factory : String
+        + Seller()
+    }
+  }
+  
+
+  namespace Model {
+    class Model.User {
+        # email : String
+        # firstName : String
+        # lastName : String
+        # password : String
+        # phoneNumber : String
+        # userName : String
+        {static} # users : ArrayList<User>
+        - credit : float
+        - userLog : ArrayList<Product>
+        + checkPattern()
+        {static} + getAccountByUserName()
+    }
+  }
+  
+
+  namespace Model {
+    enum comments {
+      Unconfirmed
+      WaitingForApproval
+      accepted
+    }
+  }
+  
+
+  namespace Model {
+    enum postStatusBuyLog {
+      deliverToTheCustomer
+      deliverToThePost
+      preparingTheOrder
+    }
+  }
+  
+
+  namespace Model {
+    enum postStatusSellLog {
+      deliverToTheCustomer
+      deliverToThePost
+      preparingTheOrder
+    }
+  }
+  
+
+  Model.BuyLog o-- Model.User : sellerName
+  Model.Buyer -up-|> Model.User
+  Model.Buyer o-- Model.Cart : cart
+  Model.Category o-- Model.Category : parentCategory
+  Model.Comments o-- Model.Product : products
+  Model.Comments o-- Model.User : userComments
+  Model.Manager -up-|> Model.User
+  Model.Product o-- Model.Category : category
+  Model.Request o-- Model.User : sender
+  Model.Score o-- Model.Product : products
+  Model.Score o-- Model.User : user
+  Model.SellLog o-- Model.User : BuyerName
+  Model.Seller -up-|> Model.User
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml
