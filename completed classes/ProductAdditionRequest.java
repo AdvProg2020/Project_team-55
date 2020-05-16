@@ -7,21 +7,23 @@ public class ProductAdditionRequest extends Request {
     String productId;
     float price;
     Category category;
+    String explanation;
     HashMap<String, String> specialAttributes;
     Random random = new Random();
 
-    public ProductAdditionRequest(Seller sender, String productId, float price, Category category, HashMap<String, String> specialAttributes) {
+    public ProductAdditionRequest(Seller sender, String productId, float price, Category category, HashMap<String, String> specialAttributes,String explanation) {
         this.productId = productId;
         this.sender = sender;
         this.price = price;
         this.category = category;
         this.specialAttributes = specialAttributes;
+        this.explanation=explanation;
         while (getRequestsById(id = Integer.toString(random.nextInt())) != null) ;
     }
 
     @Override
     public void acceptRequest() {
-        new Product(productId, price, category, specialAttributes);
+        new Product(productId, price, category, specialAttributes,explanation);
         allRequests.remove(this);
     }
 
@@ -33,6 +35,7 @@ public class ProductAdditionRequest extends Request {
         for (String attribute:specialAttributes.keySet()){
             stringBuilder.append('\n'+attribute+": "+specialAttributes.get(attribute));
         }
+        stringBuilder.append("\n extra description: "+explanation);
           return stringBuilder.toString();
     }
 
