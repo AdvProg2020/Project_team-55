@@ -141,6 +141,7 @@ public class Product {
 
     public void setAssignedOff(Off assignedOff) {
         this.assignedOff = assignedOff;
+        this.setPriceAfterOff();
     }
 
     public ArrayList<Buyer> getListOfBuyers() {

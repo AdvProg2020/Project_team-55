@@ -17,6 +17,7 @@ public class Seller extends User {
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.credit = credit;
+        users.add(this);
     }
 
     public String getFactory() {

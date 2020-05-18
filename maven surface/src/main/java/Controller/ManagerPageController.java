@@ -7,13 +7,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ManagerPageController {
-    private static ManagerPageController controller;
     private Scanner scanner = MainPageView.getScanner();
     String command;
     Matcher matcher;
@@ -185,7 +185,12 @@ public class ManagerPageController {
     }
 
     public void showAllDiscountCodes() {
-        OffWithCode.getAllDiscounts().stream().map(OffWithCode::toString).forEach(System.out::println);
+        OffWithCode.updateDiscounts();
+        for (OffWithCode discount : OffWithCode.getAllDiscounts()) {
+            System.out.println(discount.getOffAmount() + "% discount from " +
+                    discount.getStartDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")) + " to " +
+                    discount.getStopDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
+        }
 
     }
 
@@ -591,16 +596,64 @@ public class ManagerPageController {
 
     }
 
+    public void sortUsers(String field) {
+        ArrayList<User> users = new ArrayList<>();
+        users.addAll(User.getUsers());
+        if (field.equalsIgnoreCase("username")) {
+            users.sort(Comparator.comparing(User::getUserName));
+        } else if (field.equalsIgnoreCase("first name")) {
+            users.sort(Comparator.comparing(User::getFirstName));
+        } else if (field.equalsIgnoreCase("last name")) {
+            users.sort(Comparator.comparing(User::getLastName));
+        } else {
+            System.out.println("invalid field");
+            return;
+        }
+        for (User user : users) {
+            System.out.println(user.getUserName() + " " + user.getClass().getSimpleName());
+        }
+    }
+
+    public void sortDiscounts(String field) {
+        OffWithCode.updateDiscounts();
+        ArrayList<OffWithCode> discounts = new ArrayList<>();
+        discounts.addAll(OffWithCode.getAllDiscounts());
+        if (field.equalsIgnoreCase("code")) {
+            discounts.sort(Comparator.comparing(OffWithCode::getOffCode));
+        } else if (field.equalsIgnoreCase("percent")) {
+            discounts.sort(Comparator.comparing(OffWithCode::getOffAmount));
+        } else if (field.equalsIgnoreCase("start date")) {
+            discounts.sort(Comparator.comparing(OffWithCode::getStartDate));
+        } else {
+            System.out.println("invalid field");
+            return;
+        }
+        for (OffWithCode discount : discounts) {
+            System.out.println(discount.getOffAmount() + "% discount from " +
+                    discount.getStartDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")) + " to " +
+                    discount.getStopDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
+        }
+    }
+
+    public void sortRequests(String field) {
+        if (field.equalsIgnoreCase("date")) {
+            Request.allRequests.stream().sorted(Comparator.comparing(Request::getDateTime)).map(Request::toString).forEach(System.out::println);
+        } else if (field.equalsIgnoreCase("type")) {
+            Request.allRequests.stream().filter(request -> request instanceof ProductAdditionRequest).map(Request::toString).forEach(System.out::println);
+            Request.allRequests.stream().filter(request -> request instanceof ProductEditRequest).map(Request::toString).forEach(System.out::println);
+            Request.allRequests.stream().filter(request -> request instanceof ProductRemovalRequest).map(Request::toString).forEach(System.out::println);
+            Request.allRequests.stream().filter(request -> request instanceof OffAdditionRequest).map(Request::toString).forEach(System.out::println);
+            Request.allRequests.stream().filter(request -> request instanceof OffEditRequest).map(Request::toString).forEach(System.out::println);
+        } else if (field.equalsIgnoreCase("id")) {
+            Request.allRequests.stream().sorted(Comparator.comparing(Request::getId)).map(Request::toString).forEach(System.out::println);
+
+        } else System.out.println("invalid field");
+        ;
+    }
+
     private Matcher getGroup(String commandPattern, String commandText) {
         Pattern pattern = Pattern.compile(commandPattern);
         Matcher matcher = pattern.matcher(commandText);
         return matcher;
-    }
-
-    public static ManagerPageController getInstance(){
-        if (controller==null){
-            return new ManagerPageController();
-        }
-        return controller;
     }
 }

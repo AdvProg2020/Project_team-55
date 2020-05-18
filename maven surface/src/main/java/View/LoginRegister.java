@@ -14,21 +14,20 @@ import java.util.regex.Pattern;
 public class LoginRegister {
     private static LoginRegister loginRegister;
     private String input, password, username, email, firsName, factory, lastName, number, credit;
-    LoginRegisterController controller =LoginRegisterController.getInstance();
-    private MainPageView mainPage=MainPageView.getInstance();
+    private LoginRegisterController controller =new LoginRegisterController();
     private Scanner scanner= MainPageView.getScanner();
     private Matcher matcher;
 
     public void enterLoginRegisterMenu() {
         while (!(input = scanner.nextLine().trim()).equalsIgnoreCase("back")) {
             if (input.startsWith("create account") && (matcher = getGroup("create account (\\S+)\\s(\\S+)", input)).find()) {
-                String[] words = input.split(" ");
-                if (words[2].equals("buyer"))
-                    registerBuyer(words[3]);
-                else if (words[2].equals("seller")) {
-                    registerSeller(words[3]);
-                } else if (words[2].equals("manager")) {
-                    registerManager(words[3]);
+                String type=matcher.group(1),name=matcher.group(2);
+                if (type.equals("buyer"))
+                    registerBuyer(name);
+                else if (type.equals("seller")) {
+                    registerSeller(name);
+                } else if (type.equals("manager")) {
+                    registerManager(name);
                 }else System.out.println("invalid command");
             }else if (input.startsWith("login")&&(matcher=getGroup("login (\\w+)",input)).find()){
                 loginUser(matcher.group(1));
@@ -43,6 +42,7 @@ public class LoginRegister {
         while (!username.equalsIgnoreCase("back")) {
             if (User.getAccountByUserName(username) == null) {
                 System.out.println("user with this username doesn't exist");
+                username=scanner.nextLine();
             } else {
                 return controller.enterPasswordForLogin(User.getAccountByUserName(username));
             }
@@ -73,7 +73,7 @@ public class LoginRegister {
         if ((number = controller.enterPhoneNumber()).equalsIgnoreCase("back")) return;
 
         if ((credit = controller.enterInitialCredit()).equalsIgnoreCase("back")) return;
-
+        System.out.println("you registered successfully");
         controller.login(new Buyer(username, password, email, firsName, lastName, number, Float.parseFloat(credit)));
 
     }//buyer
@@ -97,7 +97,7 @@ public class LoginRegister {
         if ((number = controller.enterPhoneNumber()).equalsIgnoreCase("back")) return;
 
         if ((credit = controller.enterInitialCredit()).equalsIgnoreCase("back")) return;
-
+        System.out.println("you registered successfully");
         controller.login(new Seller(factory, username, password, email, firsName, lastName, number, Float.parseFloat(credit)));
     }
 
@@ -116,7 +116,7 @@ public class LoginRegister {
             if ((lastName = scanner.nextLine()).equalsIgnoreCase("back")) return;
 
             if ((number = controller.enterPhoneNumber()).equalsIgnoreCase("back")) return;
-
+            System.out.println("you registered successfully");
             controller.login(new Manager(username, password, email, firsName, lastName, number));
         } else {
             System.out.println("Only a manager can register another manager.");

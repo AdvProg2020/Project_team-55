@@ -12,7 +12,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 public class ProductPageController {
-    private static ProductPageController controller;
     private HashMap<String, ArrayList<String>> currentFilters = new HashMap<>();
     private Category category;
     private float maxPrice = 0, minPrice = 0;
@@ -202,9 +201,5 @@ public class ProductPageController {
         }
     }
 
-    public static ProductPageController getInstance(){
-        if (controller==null)return new ProductPageController();
-        return controller;
-    }
 
 }

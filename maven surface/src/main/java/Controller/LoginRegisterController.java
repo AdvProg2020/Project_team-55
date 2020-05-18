@@ -13,12 +13,11 @@ import View.SellerPageView;
 import java.util.Scanner;
 
 public class LoginRegisterController {
-    private static LoginRegisterController controller;
     private String command;
     private Scanner scanner= MainPageView.getScanner();
-    private ManagerPageView managerPage=ManagerPageView.getInstance();
-    private SellerPageView sellerPage=SellerPageView.getInstance();
-    private BuyerView buyerPage=BuyerView.getInstance();
+    private ManagerPageView managerPage;
+    private SellerPageView sellerPage;
+    private BuyerView buyerPage;
 
     public  boolean passwordIsValid(String string) {
         if (string.matches("\\w+")){
@@ -58,9 +57,11 @@ public class LoginRegisterController {
     }
 
     public String enterUsername(String username){
-        while (!usernameIsValid(command=scanner.nextLine().trim())){
-            if (command.equalsIgnoreCase("back"))return command;
+        command=username;
+        while (!usernameIsValid(command)){
+            if (username.equalsIgnoreCase("back"))return command;
             System.out.print("Please enter a valid username:");
+            command=scanner.nextLine().trim();
         }
         return command;
     }
@@ -122,15 +123,13 @@ public class LoginRegisterController {
 
     public void login(User user){
         if (user instanceof Manager){
+            managerPage=ManagerPageView.getInstance();
             managerPage.enterManagerPageMenu(user);
         }else if (user instanceof Seller){
+            sellerPage=SellerPageView.getInstance();
             sellerPage.enterSellerPage((Seller)user);
         }else if (user instanceof Buyer)
+            buyerPage=BuyerView.getInstance();
             buyerPage.enterBuyerPageMenu(user);
-    }
-
-    public static LoginRegisterController getInstance(){
-        if (controller==null)return new LoginRegisterController();
-        return controller;
     }
 }

@@ -38,5 +38,11 @@ public abstract class Request {
         return dateTime.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
     }
 
+    public Seller getSender() {
+        return sender;
+    }
 
+    public String getId() {
+        return id;
+    }
 }

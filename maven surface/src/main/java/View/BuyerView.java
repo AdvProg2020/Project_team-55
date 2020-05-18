@@ -14,7 +14,7 @@ public class BuyerView {
 
     private static BuyerView buyerView;
     private Matcher matcher;
-    private BuyerPageController controller =BuyerPageController.getInstance();
+    private BuyerPageController controller =new BuyerPageController();
     private MainPageView mainPage=MainPageView.getInstance();
     private Scanner scanner= MainPageView.getScanner();
     private String input;
@@ -94,8 +94,8 @@ public class BuyerView {
         while (!(input = scanner.nextLine().trim().toLowerCase()).equalsIgnoreCase("back")) {
             if (input.startsWith("show order") && (matcher = getGroup("show order (\\d+)", input)).find()) {
                 controller.showOrder(buyer,matcher.group(1));
-            } else if (input.startsWith("rate") && (matcher = getGroup("rate\\s(\\d+)\\s([1-5])", input)).find()) {
-
+            } else if (input.startsWith("rate") && (matcher = getGroup("rate\\s(\\d+)\\s([1-9])", input)).find()) {
+                controller.rateProduct(buyer,matcher.group(1),Integer.parseInt(matcher.group(2)));
             } else if (input.equalsIgnoreCase("logout")) {
                 mainPage.enterMainPage(null);
             } else if (input.equalsIgnoreCase("help")) {

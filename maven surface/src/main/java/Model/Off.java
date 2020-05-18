@@ -24,6 +24,9 @@ public class Off {
         seller.getSellerOffs().add(this);
         active = false;
         offArray.add(this);
+        for (Product product:productsArray){
+            product.setAssignedOff(this);
+        }
     }
 
     public static Off getOffById(String id) {

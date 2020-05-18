@@ -1,19 +1,20 @@
 package Model;
 
+import javax.jws.soap.SOAPBinding;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class OffWithCode {
     private static ArrayList<OffWithCode> allDiscounts = new ArrayList<>();
-    private HashMap<Buyer,Integer> applyingAccounts = new HashMap<>();
+    private HashMap<Buyer, Integer> applyingAccounts = new HashMap<>();
     private String offCode;
     private LocalDateTime startDate;
     private LocalDateTime stopDate;
     private int offAmount;
     private float maxAmount;
     private int numberOfUsesOfCode;
-    private boolean active=false;
+    private boolean active = false;
 
 
     public OffWithCode(String offCode, LocalDateTime startDate, LocalDateTime stopDate, int offAmount, float maxAmount, int numberOfUsesOfCode, ArrayList<Buyer> applyingAccounts) {
@@ -23,8 +24,8 @@ public class OffWithCode {
         this.offAmount = offAmount;
         this.maxAmount = maxAmount;
         this.numberOfUsesOfCode = numberOfUsesOfCode;
-        for (Buyer buyer:applyingAccounts){
-            this.applyingAccounts.put(buyer,numberOfUsesOfCode);
+        for (Buyer buyer : applyingAccounts) {
+            this.applyingAccounts.put(buyer, numberOfUsesOfCode);
         }
     }
 
@@ -49,7 +50,7 @@ public class OffWithCode {
 
     public void addUserToDiscount(User user) {
 
-        applyingAccounts.put((Buyer)user,numberOfUsesOfCode);
+        applyingAccounts.put((Buyer) user, numberOfUsesOfCode);
     }
 
     public void removeUserFromDiscount(User user) {
@@ -117,23 +118,28 @@ public class OffWithCode {
         this.numberOfUsesOfCode = numberOfUsesOfCode;
     }
 
-    public static void updateDiscounts(){
-        for (OffWithCode discount:allDiscounts){
-            discount.active=false;
-            if (discount.startDate.isBefore(LocalDateTime.now())&&discount.stopDate.isAfter(LocalDateTime.now()))
-                discount.active=true;
+    public static void updateDiscounts() {
+        for (OffWithCode discount : allDiscounts) {
+            discount.active = false;
+            if (discount.startDate.isBefore(LocalDateTime.now()) && discount.stopDate.isAfter(LocalDateTime.now()))
+                discount.active = true;
         }
     }
 
     @Override
     public String toString() {
-        return "discount:" +
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("discount:" +
                 "\noff code=" + offCode +
                 "\nstart date=" + startDate +
                 "\nend date=" + stopDate +
                 "\ndiscount percent=" + offAmount +
                 "\nnumber of uses of code=" + numberOfUsesOfCode +
-                "\napplying accounts=" + applyingAccounts;
+                "\napplying accounts=");
+        for (Buyer buyer:applyingAccounts.keySet()){
+            stringBuilder.append('\n'+buyer.userName);
+        }
+        return stringBuilder.toString();
     }
 
     public void editDiscountCode(String field, String newValue) {

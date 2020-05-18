@@ -12,7 +12,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 public class OffsController {
-    private static OffsController controller;
     private JustUniqueProduct uniqueProduct=JustUniqueProduct.getInstance();
     private  HashMap<String, ArrayList<String>> currentFilters = new HashMap<>();
     private Category category=null;
@@ -200,9 +199,5 @@ public class OffsController {
         }
      }
 
-     public static OffsController getInstance(){
-        if (controller==null)return new OffsController();
-        return controller;
-     }
 
 }

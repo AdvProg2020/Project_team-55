@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class ManagerPageView {
     private static ManagerPageView managerPage;
-    private ManagerPageController controller = ManagerPageController.getInstance();
+    private ManagerPageController controller = new ManagerPageController();
     private ProductPageView productPage = ProductPageView.getInstance();
     private OffView offView = OffView.getInstance();
     private MainPageView mainPage = MainPageView.getInstance();
@@ -37,7 +37,7 @@ public class ManagerPageView {
                 manageCategoriesByManager();
             } else if ("products".equalsIgnoreCase(command)) {
                 productPage.enterProductPage(user);
-            } else if ("offs".equalsIgnoreCase("command")) {
+            } else if ("offs".equalsIgnoreCase(command)) {
                 offView.offMenu(user);
             } else if (command.equalsIgnoreCase("logout")) {
                 mainPage.enterMainPage(null);
@@ -91,7 +91,7 @@ public class ManagerPageView {
             } else if (command.equals("create manager profile")) {
                 controller.addSubManager();
             } else if (command.toLowerCase().startsWith("sort by") && (matcher = getGroup("sort by (.+)", command)).find()) {
-                //todo: sort command
+                controller.sortUsers(matcher.group(1));
             } else if (command.equalsIgnoreCase("logout")) {
                 mainPage.enterMainPage(null);
             } else if (command.equalsIgnoreCase("help")) {
@@ -141,14 +141,14 @@ public class ManagerPageView {
                     (matcher = getGroup("remove discount code (\\d+)", command)).find()) {
                 controller.removeDiscountCode(matcher.group(1));
             } else if (command.toLowerCase().startsWith("sort by") && (matcher = getGroup("sort by (.+)", command)).find()) {
-                //todo: sort command
+                controller.sortDiscounts(matcher.group(1));
             } else if (command.equalsIgnoreCase("logout")) {
                 mainPage.enterMainPage(null);
             } else if (command.equalsIgnoreCase("help")) {
                 System.out.println("view discount code [discount code]\n" +
                         "edit discount code [discount code]\n" +
                         "remove discount code [discount code]\n" +
-                        "sort by [code/percent/start date/finish date]\n" +
+                        "sort by [code/percent/start date]\n" +
                         "logout\n" +
                         "back\n" +
                         "help");
@@ -208,7 +208,7 @@ public class ManagerPageView {
                 System.out.println("details [request id]\n" +
                         "accept [request id]\n" +
                         "decline [request id]\n" +
-                        "sort by [sender/type/date]\n" +
+                        "sort by [id/type/date]\n" +
                         "logout\n" +
                         "back\n" +
                         "help");

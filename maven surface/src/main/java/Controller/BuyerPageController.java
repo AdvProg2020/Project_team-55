@@ -8,7 +8,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class BuyerPageController {
-    private static BuyerPageController controller;
     private String command;
     private Scanner scanner=MainPageView.getScanner();
     private JustUniqueProduct uniqueProduct = JustUniqueProduct.getInstance();
@@ -166,6 +165,23 @@ public class BuyerPageController {
         }
     }
 
+    public void rateProduct(Buyer buyer,String id,int rate){
+        for (BuyLog log:buyer.getOrderHistory()){
+            if (Product.productWithNameExists(id)&&log.getListOfProducts().containsKey(Product.getProductById(id))){
+                if (rate<=5){
+                    Score score=Score.getInstance();
+                    score.rateProduct(Product.getProductById(id),rate);
+                    System.out.println("product rated successfully");
+                    return;
+                }else {
+                    System.out.println("product rate should be 1-5.");
+                    return;
+                }
+            }
+        }
+        System.out.println("product with this id doesn't exist");;
+    }
+
     public void showUsersDiscounts(Buyer buyer) {
         OffWithCode.updateDiscounts();
         for (OffWithCode discount : OffWithCode.getAllDiscounts()) {
@@ -175,10 +191,5 @@ public class BuyerPageController {
                             discount.getStopDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
             }
         }
-    }
-
-    public static BuyerPageController getInstance(){
-        if (controller==null)return new BuyerPageController();
-        return controller;
     }
 }

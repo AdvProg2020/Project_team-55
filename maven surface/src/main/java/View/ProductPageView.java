@@ -10,12 +10,13 @@ import java.util.regex.Pattern;
 
 public class ProductPageView {
     private static ProductPageView productPage;
+    private MainPageView mainPageView=MainPageView.getInstance();
     private String command;
     private MainPageView mainPage=MainPageView.getInstance();
     private Scanner scanner= MainPageView.getScanner();
     private Matcher matcher;
     LoginRegister loginRegister=LoginRegister.getInstance();
-    private ProductPageController controller=ProductPageController.getInstance();
+    private ProductPageController controller=new ProductPageController();
 
     public void enterProductPage(User user) {
         while (!(command=scanner.nextLine().trim().toLowerCase()).equalsIgnoreCase("back")){
@@ -40,7 +41,7 @@ public class ProductPageView {
                 else System.out.println("logout");
                 System.out.println("back\nhelp");
             }else System.out.println("invalid command");
-        }
+        }if (user==null)mainPage.enterMainPage(null);
     }
 
     public void enterFilterMenu(User user) {

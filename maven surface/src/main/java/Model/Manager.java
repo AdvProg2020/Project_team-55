@@ -16,6 +16,7 @@ public class Manager extends User {
         this.password = password;
         if (mainManager==null)mainManager=this;
         else subManagers.add(this);
+        users.add(this);
     }
 
     public static Manager getMainManager() {

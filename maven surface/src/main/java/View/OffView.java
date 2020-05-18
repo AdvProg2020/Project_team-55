@@ -11,9 +11,10 @@ public class OffView {
 
     private static OffView offView;
     private Scanner scanner= MainPageView.getScanner();
+    private MainPageView mainPageView=MainPageView.getInstance();
     private String command;
     private Matcher matcher;
-    private OffsController offController=OffsController.getInstance();
+    private OffsController offController=new OffsController();
     private LoginRegister loginRegister=LoginRegister.getInstance();
 
     public void offMenu(User user) {
@@ -36,13 +37,14 @@ public class OffView {
                 else user=loginRegister.loginByForce();
             } else if (command.equalsIgnoreCase("help")) {
                 System.out.println("show product [product id]\nfiltering\nsorting");
-                if (user == null) System.out.println("login\nregister");
+                if (user == null) System.out.println("login\n");
                 else System.out.println("logout");
                 System.out.println("back\nhelp");
             }else {
                 System.out.println("invalid command");
             }
         }
+        if (user==null)mainPageView.enterMainPage(null);
     }
 
     private void enterSortingMenu(User user) {

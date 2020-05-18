@@ -20,6 +20,7 @@ public class Score {
             productRates.put(product, new ArrayList<Integer>());
         }
         productRates.get(product).add(rate);
+        updateRates();
     }
 
     private void updateRates(){

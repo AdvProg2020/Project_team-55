@@ -8,15 +8,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.function.Function;
 
 public class SellerPageController {
 
-    private static SellerPageController controller;
-    private Scanner scanner= MainPageView.getScanner();
+    private Scanner scanner = MainPageView.getScanner();
     private String command;
-    private JustUniqueProduct uniqueProduct=JustUniqueProduct.getInstance();
+    private JustUniqueProduct uniqueProduct = JustUniqueProduct.getInstance();
 
     public boolean sellerHasProductWithId(Seller seller, String id) {
         return seller.getArrayProduct().contains(Product.getProductById(id));
@@ -79,9 +80,9 @@ public class SellerPageController {
         } else return !password.equalsIgnoreCase("back");
     }
 
-    public void showSellerProducts(Seller seller){
-        for (Product product:seller.getArrayProduct()){
-            System.out.println(product.getProductId()+" "+product.getSpecialAttributes().get("name")+"\nprice: "+product.getPrice());
+    public void showSellerProducts(Seller seller) {
+        for (Product product : seller.getArrayProduct()) {
+            System.out.println(product.getProductId() + " " + product.getSpecialAttributes().get("name") + "\nprice: " + product.getPrice());
         }
     }
 
@@ -153,9 +154,9 @@ public class SellerPageController {
                     System.out.print("the category you've chosen is the same as before please enter another category:");
                 } else {
                     System.out.println("now you should change product attributes according to category.");
-                    HashMap<String,String> newAttributes=enterProductAttributes(Category.getCategoryByName(command).getSpecialAttributes());
-                    if (newAttributes==null)return;
-                    new ProductEditRequest(product, seller).changeCategory(Category.getCategoryByName(command),newAttributes);
+                    HashMap<String, String> newAttributes = enterProductAttributes(Category.getCategoryByName(command).getSpecialAttributes());
+                    if (newAttributes == null) return;
+                    new ProductEditRequest(product, seller).changeCategory(Category.getCategoryByName(command), newAttributes);
                     System.out.println("your request to change product " + product.getProductId() + "'s category has been sent to the manager.");
                     break;
                 }
@@ -268,10 +269,10 @@ public class SellerPageController {
         }
     }
 
-    public void showSellerOffs(Seller seller){
-        for (Off off:seller.getSellerOffs()){
-            System.out.println(off.getOffId()+" "+off.getOffAmount()+"%off from "+
-                    off.getStartDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))+" to "+
+    public void showSellerOffs(Seller seller) {
+        for (Off off : seller.getSellerOffs()) {
+            System.out.println(off.getOffId() + " " + off.getOffAmount() + "%off from " +
+                    off.getStartDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")) + " to " +
                     off.getStopDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
         }
     }
@@ -483,8 +484,41 @@ public class SellerPageController {
         return products;
     }
 
-    public static SellerPageController getInstance(){
-        if (controller==null)return new SellerPageController();
-        return controller;
+    public void sortSellerProducts(Seller seller, String field) {
+        ArrayList<Product> products = new ArrayList<>();
+        products.addAll(seller.getArrayProduct());
+        if (field.equalsIgnoreCase("view")) {
+            products.sort(Comparator.comparing(Product::getViews));
+        } else if (field.equalsIgnoreCase("score")) {
+            products.sort(Comparator.comparing(Product::getAverageScore));
+        } else if (field.equalsIgnoreCase("price")) {
+            products.sort(Comparator.comparing(Product::getPrice));
+        } else {
+            System.out.println("invalid field");
+            return;
+        }
+        for (Product product : products) {
+            System.out.println(product.getProductId() + " " + product.getSpecialAttributes().get("name") + "\nprice: " + product.getPrice());
+        }
+    }
+
+    public void sortSellerOffs(Seller seller,String field) {
+        ArrayList<Off> offs=new ArrayList<>();
+        offs.addAll(seller.getSellerOffs());
+        if (field.equalsIgnoreCase("percent")){
+            offs.sort(Comparator.comparing(Off::getOffAmount));
+        }else if (field.equalsIgnoreCase("id")){
+            offs.sort(Comparator.comparing(Off::getOffId));
+        }else if (field.equalsIgnoreCase("start date")){
+            offs.sort(Comparator.comparing(Off::getStartDate));
+        }else {
+            System.out.println("invalid field");
+            return;
+        }
+        for (Off off : offs) {
+            System.out.println(off.getOffId() + " " + off.getOffAmount() + "%off from " +
+                    off.getStartDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")) + " to " +
+                    off.getStopDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
+        }
     }
 }

@@ -2,7 +2,6 @@ package View;
 
 import Controller.SellerPageController;
 import Model.*;
-import com.sun.xml.internal.ws.api.model.WSDLOperationMapping;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,11 +15,11 @@ import java.util.regex.Pattern;
 public class SellerPageView {
     private static SellerPageView sellerPage;
     private String command;
-    private SellerPageController controller =SellerPageController.getInstance();
-    private MainPageView mainPage=MainPageView.getInstance();
-    private Scanner scanner= MainPageView.getScanner();
-    private ProductPageView productPage=ProductPageView.getInstance();
-    private OffView offPage=OffView.getInstance();
+    private SellerPageController controller = new SellerPageController();
+    private MainPageView mainPage = MainPageView.getInstance();
+    private Scanner scanner = MainPageView.getScanner();
+    private ProductPageView productPage = ProductPageView.getInstance();
+    private OffView offPage = OffView.getInstance();
     private Matcher matcher;
 
     public void enterSellerPage(Seller user) {
@@ -64,7 +63,7 @@ public class SellerPageView {
                         "logout\n" +
                         "back\n" +
                         "help");
-            }else System.out.println("invalid command");
+            } else System.out.println("invalid command");
         }
     }
 
@@ -78,7 +77,7 @@ public class SellerPageView {
                 mainPage.enterMainPage(null);
             } else if (command.equalsIgnoreCase("help")) {
                 System.out.println("edit [field]\nlogout\nback\nhelp");
-            }else System.out.println("invalid command");
+            } else System.out.println("invalid command");
         }
 
     }
@@ -92,14 +91,14 @@ public class SellerPageView {
                 controller.goToProductPage(user, matcher.group(1));
             } else if (command.startsWith("edit") && (matcher = getGroup("edit (\\d+)", command)).find()) {
                 editProduct((Seller) user, matcher.group(1));
-            } else if (command.toLowerCase().startsWith("sort by") && (matcher = getGroup("sort by (.+)", command.toLowerCase())).find()) {
-                //todo sort command
+            } else if (command.toLowerCase().startsWith("sort by") && (matcher = getGroup("sort by (\\S+)", command.toLowerCase())).find()) {
+                controller.sortSellerProducts((Seller) user, matcher.group(1));
             } else if (command.equalsIgnoreCase("logout")) {
                 mainPage.enterMainPage(null);
             } else if (command.equalsIgnoreCase("help")) {
-                System.out.println("view buyers [product id]\nview [product id]\nedit [product id]\nsort by[view/average score/price]" +
+                System.out.println("view buyers [product id]\nview [product id]\nedit [product id]\nsort by[view/score/price]" +
                         "\nlogout\nback\nhelp");
-            }else System.out.println("invalid command");
+            } else System.out.println("invalid command");
         }
     }
 
@@ -156,7 +155,7 @@ public class SellerPageView {
     }
 
     public void viewSellerOffs(User user) {
-        controller.showSellerOffs((Seller)user);
+        controller.showSellerOffs((Seller) user);
         while (!(command = scanner.nextLine().trim().toLowerCase()).equalsIgnoreCase("back")) {
             if (command.startsWith("view") && (matcher = getGroup("view (\\d+)", command)).find()) {
                 controller.viewOff(matcher.group(1));
@@ -164,10 +163,9 @@ public class SellerPageView {
                 editOff((Seller) user, matcher.group(1));
             } else if (command.equalsIgnoreCase("add off")) {
                 addOff((Seller) user);
-            }else if (command.toLowerCase().startsWith("sort by")&&(matcher=getGroup("sort by (.+)",command.toLowerCase())).find()){
-                //todo sort command;
-            }
-            else if (command.equalsIgnoreCase("logout")) {
+            } else if (command.toLowerCase().startsWith("sort by") && (matcher = getGroup("sort by (.+)", command.toLowerCase())).find()) {
+                controller.sortSellerOffs((Seller) user, matcher.group(1));
+            } else if (command.equalsIgnoreCase("logout")) {
                 mainPage.enterMainPage(null);
             } else if (command.equalsIgnoreCase("help")) {
                 System.out.println("view [off id]\nedit [off id]\nadd off\nsort by [percent/id/start date]\nlogout\nback\nhelp");
@@ -178,7 +176,7 @@ public class SellerPageView {
     }
 
     private void editOff(Seller seller, String id) {
-        if (Off.getOffById(id) != null) {
+        if (Off.getOffById(id) != null && seller.getSellerOffs().contains(Off.getOffById(id))) {
             System.out.print("which field do you want to edit: ");
             while (!(command = scanner.nextLine().trim()).equalsIgnoreCase("back")) {
                 if (command.equalsIgnoreCase("percent")) {
@@ -191,7 +189,7 @@ public class SellerPageView {
                     editProductsOfOff(seller, Off.getOffById(id));
                 } else if (command.equalsIgnoreCase("help")) {
                     System.out.println("percent\nstart date\nend date\nincluding product\nback\nhelp");
-                }else System.out.println("invalid command");
+                } else System.out.println("invalid command");
             }
         } else {
             System.out.println("off with this id doesn't exist");
@@ -210,7 +208,7 @@ public class SellerPageView {
                 controller.removeProductFromOff(seller, off, getGroup("remove (\\d+)", command).group(1));
             } else if (command.equalsIgnoreCase("help")) {
                 System.out.println("add [product id]\nremove [product id]\nback\nhelp");
-            }else System.out.println("invalid command");
+            } else System.out.println("invalid command");
         }
     }
 
@@ -243,8 +241,8 @@ public class SellerPageView {
         return matcher;
     }
 
-    public static SellerPageView getInstance(){
-        if (sellerPage==null)return new SellerPageView();
+    public static SellerPageView getInstance() {
+        if (sellerPage == null) return new SellerPageView();
         return sellerPage;
     }
 }
