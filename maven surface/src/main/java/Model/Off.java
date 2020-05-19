@@ -48,6 +48,7 @@ public class Off {
             Off off = (Off) iterator.next();
             if (off.startDate.isBefore(LocalDateTime.now()) && off.stopDate.isAfter(LocalDateTime.now())) {
                 off.active = true;
+                off.getProductsArray().forEach(Product::setPriceAfterOff);
             }
             if (off.stopDate.isBefore(LocalDateTime.now())) {
                 for (Product product : off.productsArray) {

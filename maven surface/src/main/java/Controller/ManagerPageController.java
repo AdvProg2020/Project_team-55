@@ -410,6 +410,18 @@ public class ManagerPageController {
         discount.setStopDate(LocalDateTime.parse(newEndDate, DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
     }
 
+    public void enterNumberOfUsesOfDiscount(OffWithCode discount){
+        System.out.print("enter the number of times you want the code to be used:");
+        while (!(command=scanner.nextLine().trim()).equalsIgnoreCase("back")){
+            try{
+                discount.setNumberOfUsesOfCode(Integer.parseInt(command));
+                break;
+            }catch (NumberFormatException e){
+                System.out.println("invalid number format. try again");
+            }
+        }
+    }
+
     public void removeDiscountCode(String code) {
         if (OffWithCode.getOffByCode(code) != null) {
             OffWithCode.deleteDiscount(OffWithCode.getOffByCode(code));
@@ -541,7 +553,7 @@ public class ManagerPageController {
     public void addCategory(String name) {
         if (!Category.categoryWithNameExists(name)) {
             System.out.print("would you like this category to be a sub-category of any category?[yes/no]");
-            while (!(command = scanner.nextLine().trim()).equalsIgnoreCase("yes|no")) {
+            while (!(command = scanner.nextLine().trim()).matches("yes|no")) {
                 if (command.equals("back")) {
                     return;
                 }

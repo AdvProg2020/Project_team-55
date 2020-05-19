@@ -1,6 +1,7 @@
 package Model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +42,10 @@ public class SellLog {
         allSales.add(this);
     }
 
+    public static ArrayList<SellLog> getAllSales() {
+        return allSales;
+    }
+
     public static SellLog getSellLogById(String id){
         for (SellLog log:allSales){
             if (log.logId.equalsIgnoreCase(id)){
@@ -50,5 +55,9 @@ public class SellLog {
         return null;
     }
 
-
+    @Override
+    public String toString() {
+        return logId+ " product "+boughtProduct.getProductId()+" by quantity "+number+
+                "sold at "+date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+    }
 }

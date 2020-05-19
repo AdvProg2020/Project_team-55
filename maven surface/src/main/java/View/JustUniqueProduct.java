@@ -72,7 +72,7 @@ public class JustUniqueProduct {
     }
 
     public static JustUniqueProduct getInstance(){
-        if (uniqueProduct==null)return new JustUniqueProduct();
+        if (uniqueProduct==null)return uniqueProduct=new JustUniqueProduct();
         return uniqueProduct;
     }
 

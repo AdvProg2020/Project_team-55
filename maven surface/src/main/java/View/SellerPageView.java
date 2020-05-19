@@ -23,13 +23,16 @@ public class SellerPageView {
     private Matcher matcher;
 
     public void enterSellerPage(Seller user) {
+        System.out.println("seller user panel");
         while (!(command = scanner.nextLine().trim()).equalsIgnoreCase("back")) {
             if (command.equalsIgnoreCase("view personal info")) {
                 editSellerInfo(user);
             } else if (command.equalsIgnoreCase("view company information")) {
                 System.out.println(user.getFactory());
             } else if (command.equalsIgnoreCase("view sales history")) {
-                System.out.println(user.getSellHistory());
+                for (SellLog sell:user.getSellHistory()){
+                    System.out.println(sell.toString());
+                }
             } else if (command.equalsIgnoreCase("manage products")) {
                 manageSellerProductMenu(user);
             } else if (command.equalsIgnoreCase("add product")) {
@@ -48,6 +51,8 @@ public class SellerPageView {
                 offPage.offMenu(user);
             } else if (command.equalsIgnoreCase("logout")) {
                 mainPage.enterMainPage(null);
+            }else if (command.equalsIgnoreCase("exit")){
+                System.exit(1);
             } else if (command.equalsIgnoreCase("help")) {
                 System.out.println("view personal info\n" +
                         "view company information\n" +
@@ -62,9 +67,10 @@ public class SellerPageView {
                         "offs\n" +
                         "logout\n" +
                         "back\n" +
+                        "exit\n"+
                         "help");
             } else System.out.println("invalid command");
-        }
+        }mainPage.enterMainPage(user);
     }
 
     public void editSellerInfo(User user) {
@@ -242,7 +248,7 @@ public class SellerPageView {
     }
 
     public static SellerPageView getInstance() {
-        if (sellerPage == null) return new SellerPageView();
+        if (sellerPage == null) return sellerPage=new SellerPageView();
         return sellerPage;
     }
 }

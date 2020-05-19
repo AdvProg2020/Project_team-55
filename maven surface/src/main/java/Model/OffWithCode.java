@@ -114,8 +114,15 @@ public class OffWithCode {
     }
 
     public void setNumberOfUsesOfCode(int numberOfUsesOfCode) {
-
         this.numberOfUsesOfCode = numberOfUsesOfCode;
+        for (Buyer buyer:applyingAccounts.keySet()){
+            int remain=applyingAccounts.get(buyer)+numberOfUsesOfCode;
+            applyingAccounts.put(buyer,remain);
+        }
+    }
+
+    public void useByUser(Buyer buyer){
+        this.applyingAccounts.put(buyer,applyingAccounts.get(buyer)-1);
     }
 
     public static void updateDiscounts() {
@@ -142,16 +149,4 @@ public class OffWithCode {
         return stringBuilder.toString();
     }
 
-    public void editDiscountCode(String field, String newValue) {
-        if (field.equalsIgnoreCase("start date")) {
-            // TODO: do something about the date
-        } else if (field.equalsIgnoreCase("end date")) {
-
-        } else if (field.equalsIgnoreCase("discount percent")) {
-            setOffAmount(Integer.parseInt(newValue));
-        } else if (field.equalsIgnoreCase("number of uses of code")) {
-            setNumberOfUsesOfCode(Integer.parseInt(newValue));
-        }
-        System.out.println(field + " changed successfully");
-    }
 }

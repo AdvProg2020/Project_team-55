@@ -191,6 +191,11 @@ public class ProductPageController {
         return sortBy;
     }
 
+
+    public HashMap<String, ArrayList<String>> getCurrentFilters() {
+        return currentFilters;
+    }
+
     public void applySort() {
         if (sortBy.equals("views")) {
             filteredProducts.sort(Comparator.comparing(Product::getViews));

@@ -20,6 +20,7 @@ public class BuyerView {
     private String input;
 
     public void enterBuyerPageMenu(User user) {
+        System.out.println("buyer user panel");
         while (!(input = scanner.nextLine().trim()).equalsIgnoreCase("back")) {
             if (input.equalsIgnoreCase("view personal info")) {
                 editBuyerInfo(user);
@@ -33,10 +34,14 @@ public class BuyerView {
                 controller.showUsersDiscounts((Buyer) user);
             } else if (input.equalsIgnoreCase("logout")) {
                 mainPage.enterMainPage(null);
+            } else if (input.equalsIgnoreCase("exit")){
+                System.exit(1);
             } else if (input.equalsIgnoreCase("help")){
-                System.out.println("view personal info\nview cart\nview orders\nview balance\nview discount codes\nlogout\nback\n help");
+                System.out.println("view personal info\nview cart\nview orders\nview balance\n" +
+                        "view discount codes\nlogout\nback\nexit\n help");
             }else System.out.println("invalid command");
         }
+        mainPage.enterMainPage(user);
     }
 
     public void editBuyerInfo(User user) {
@@ -111,7 +116,7 @@ public class BuyerView {
     }
 
     public static BuyerView getInstance(){
-        if (buyerView==null)return new BuyerView();
+        if (buyerView==null)return buyerView= new BuyerView();
         return buyerView;
     }
 }

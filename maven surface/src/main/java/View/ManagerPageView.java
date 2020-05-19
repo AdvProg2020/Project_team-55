@@ -20,6 +20,7 @@ public class ManagerPageView {
     private Matcher matcher;
 
     public void enterManagerPageMenu(User user) {
+        System.out.println("manager user panel");
         while (!(command = scanner.nextLine()).trim().equalsIgnoreCase("back")) {
             if ("view personal info".equalsIgnoreCase(command)) {
                 viewPersonalInfoManager(user);
@@ -41,6 +42,8 @@ public class ManagerPageView {
                 offView.offMenu(user);
             } else if (command.equalsIgnoreCase("logout")) {
                 mainPage.enterMainPage(null);
+            } else if (command.equalsIgnoreCase("exit")){
+                System.exit(1);
             } else if ("help".equalsIgnoreCase(command)) {
                 System.out.println("view personal info\n" +
                         "manage users\n" +
@@ -53,11 +56,13 @@ public class ManagerPageView {
                         "offs\n" +
                         "logout\n" +
                         "back\n" +
+                        "exit\n" +
                         "help");
             } else {
                 System.out.println("invalid command");
             }
         }
+        mainPage.enterMainPage(user);
     }
 
     public void viewPersonalInfoManager(User user) {
@@ -175,9 +180,11 @@ public class ManagerPageView {
                     controller.editDiscountStartDate(OffWithCode.getOffByCode(discount));
                 } else if (command.equalsIgnoreCase("end date")) {
                     controller.editDiscountEndDate(OffWithCode.getOffByCode(discount));
+                } else if (command.equalsIgnoreCase("number of uses per user")) {
+                    controller.enterNumberOfUsesOfDiscount(OffWithCode.getOffByCode(discount));
                 } else if (command.equalsIgnoreCase("help")) {
                     System.out.println("fields you can edit are:\n" +
-                            "amount, applying users, maximum amount, start date, end date\n" +
+                            "amount, applying users, number of uses per user, maximum amount, start date, end date\n" +
                             "other commands:\n" +
                             "back\n" +
                             "help");
@@ -201,7 +208,7 @@ public class ManagerPageView {
                     (matcher = getGroup("decline (\\d+)", command)).find()) {
                 controller.declineRequest(matcher.group(1));
             } else if (command.toLowerCase().startsWith("sort by") && (matcher = getGroup("sort by (.+)", command)).find()) {
-                //todo: sort command
+                controller.sortRequests(matcher.group(1));
             } else if (command.equalsIgnoreCase("logout")) {
                 mainPage.enterMainPage(null);
             } else if (command.equalsIgnoreCase("help")) {
@@ -286,7 +293,7 @@ public class ManagerPageView {
 
     public static ManagerPageView getInstance() {
         if (managerPage == null) {
-            return new ManagerPageView();
+            return managerPage=new ManagerPageView();
         }
         return managerPage;
     }

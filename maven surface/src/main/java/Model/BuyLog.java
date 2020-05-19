@@ -66,6 +66,10 @@ public class BuyLog {
         return purchasedMoney;
     }
 
+    public static ArrayList<BuyLog> getAllSales() {
+        return allSales;
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder=new StringBuilder();
@@ -74,16 +78,16 @@ public class BuyLog {
         stringBuilder.append("\nreceiver name: "+receiver+
                 "\naddress: "+address+"\nphone number: "+phone);
         stringBuilder.append("\n+-----------------+------------+----------------+");
-        stringBuilder.append("\n+product----------+quantity----+price per each--+");
+        stringBuilder.append("\n|product          |quantity    |price per each  |");
         stringBuilder.append("\n+-----------------+------------+----------------+");
         for (Product product:listOfProducts.keySet()){
-            stringBuilder.append(String.format("| %-17s | %-12d  | %-16f |%n",
+            stringBuilder.append(String.format("\n| %-15s | %-9d  | %-14f |%n",
                     product.getSpecialAttributes().get("name"), listOfProducts.get(product), product.getPrice()));
         }
-        stringBuilder.append("\n+-----------------+------------+----------------+");
         stringBuilder.append("\ntotal price with offs: "+purchasedMoney+omittedPrice);
         stringBuilder.append("\ndecreased price with "+discountPercent+"% discount: "+omittedPrice);
         stringBuilder.append("\npurchase price: "+purchasedMoney);
+        stringBuilder.append("\n+-----------------+------------+----------------+");
         return stringBuilder.toString();
     }
 }

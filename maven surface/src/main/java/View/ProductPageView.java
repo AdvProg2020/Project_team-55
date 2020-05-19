@@ -56,7 +56,7 @@ public class ProductPageView {
                 controller.removeFilter(matcher.group(1));
             } else if (command.equalsIgnoreCase("help")) {
                 System.out.println("show available filters\ncurrent filters\nfilter ([attribute]:[attribute value] or price:[min price]-[max price])" +
-                        "disable filter ([attribute]:[attribute value] or price)\nback\nhelp");
+                        "\ndisable filter ([attribute]:[attribute value] or price)\nback\nhelp");
             }
         }
     }
@@ -84,7 +84,7 @@ public class ProductPageView {
     }
 
     public static ProductPageView getInstance(){
-        if (productPage==null)return new ProductPageView();
+        if (productPage==null)return productPage=new ProductPageView();
         return productPage;
     }
 

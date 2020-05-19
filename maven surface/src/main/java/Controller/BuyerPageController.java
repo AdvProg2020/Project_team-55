@@ -124,6 +124,7 @@ public class BuyerPageController {
                     if (discount.getApplyingAccounts().get(buyer) == 0) {
                         System.out.print("you cannot use this code anymore. try another code:");
                     } else {
+                        discount.useByUser(buyer);
                         return discount.getOffCode();
                     }
                 } else {

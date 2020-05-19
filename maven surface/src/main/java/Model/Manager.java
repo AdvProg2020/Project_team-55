@@ -23,6 +23,10 @@ public class Manager extends User {
         return mainManager;
     }
 
+    public static void setMainManager(Manager mainManager) {
+        Manager.mainManager = mainManager;
+    }
+
     @Override
     public void changeInfo(String field, String newValue) {
         if (field.equalsIgnoreCase("first name")) {

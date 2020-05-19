@@ -1,8 +1,10 @@
 package Model;
 
+import javax.jws.soap.SOAPBinding;
+import java.io.*;
 import java.util.ArrayList;
 
-public abstract class User {
+public abstract class User implements Serializable {
     protected static ArrayList<User> users = new ArrayList<>();
     protected String userName;
     protected String firstName;
@@ -80,4 +82,14 @@ public abstract class User {
     public float getCredit() {
         return credit;
     }
+
+    public static void saveData() throws IOException {
+        File file=new File("users.dat");
+        FileOutputStream outputStream=new FileOutputStream(file);
+        ObjectOutputStream objectOutputStream=new ObjectOutputStream(outputStream);
+        for (User user:users){
+            objectOutputStream.writeObject(user);
+        }
+    }
+
 }

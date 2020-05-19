@@ -47,7 +47,7 @@ public class MainPageView {
     }
 
     public static Scanner getScanner(){
-        if (mainScanner==null)return new Scanner(System.in);
+        if (mainScanner==null)return mainScanner=new Scanner(System.in);
         return mainScanner;
     }
 

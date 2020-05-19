@@ -59,7 +59,7 @@ public class LoginRegisterController {
     public String enterUsername(String username){
         command=username;
         while (!usernameIsValid(command)){
-            if (username.equalsIgnoreCase("back"))return command;
+            if (command.equalsIgnoreCase("back"))return command;
             System.out.print("Please enter a valid username:");
             command=scanner.nextLine().trim();
         }
