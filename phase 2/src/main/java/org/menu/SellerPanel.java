@@ -22,9 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import org.example.App;
-import sun.nio.cs.US_ASCII;
 
-import javax.jws.soap.SOAPBinding;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -45,22 +43,25 @@ public class SellerPanel extends Menu {
         AnchorPane.setBottomAnchor(commands, 500.0);
         commands.setSpacing(15);
 
-        ImageView profile=new ImageView(((Seller)User.getActiveUser()).getProfile());
+        ImageView profile = new ImageView(User.getActiveUser().getProfile());
+        profile.resize(300, 300);
+        profile.setFitWidth(300);
+        profile.setFitHeight(300);
 
-        Button editProfile=new Button("edit profile");
+        Button editProfile = new Button("edit profile");
         editProfile.getStyleClass().add("command");
         editProfile.setOnAction(event -> App.getMainStage().setScene(editProfile()));
 
         Button company = new Button("view company information");
         company.getStyleClass().add("command");
         company.setOnAction(event -> {
-            new Alert(Alert.AlertType.INFORMATION,"you work for "+((Seller) User.getActiveUser()).getFactory()).show();
+            new Alert(Alert.AlertType.INFORMATION, "you work for " + ((Seller) User.getActiveUser()).getFactory()).show();
         });
 
-        Button balance=new Button("show balance");
+        Button balance = new Button("show balance");
         balance.getStyleClass().add("command");
         balance.setOnAction(event -> {
-            new Alert(Alert.AlertType.INFORMATION,"your credit is "+User.getActiveUser().getCredit());
+            new Alert(Alert.AlertType.INFORMATION, "your credit is " + User.getActiveUser().getCredit());
         });
 
         Button sale = new Button("view sell history");
@@ -84,7 +85,7 @@ public class SellerPanel extends Menu {
         offs.getStyleClass().add("command");
         offs.setOnAction(event -> App.getMainStage().setScene(manageOffs()));
 
-        commands.getChildren().addAll(profile,editProfile,company,balance, sale, manageProducts, categories, offs);
+        commands.getChildren().addAll(profile, editProfile, company, balance, sale, manageProducts, categories, offs);
         pane.getChildren().add(commands);
 
         GridPane info = new GridPane();
@@ -95,40 +96,42 @@ public class SellerPanel extends Menu {
         info.setLayoutY(200);
         info.setAlignment(Pos.CENTER);
 
+        info.add(new Text("seller: "+User.getActiveUser().getUsername()),0,0);
+
         Text firstName = new Text("first name:");
         firstName.getStyleClass().add("info-grid");
-        info.add(firstName, 0, 0);
+        info.add(firstName, 0, 1);
 
-        Text firstNameValue = new Text(((Seller)User.getActiveUser()).getFirstName());
+        Text firstNameValue = new Text(((Seller) User.getActiveUser()).getFirstName());
         firstNameValue.getStyleClass().add("info-grid");
-        info.add(firstNameValue, 1, 0);
+        info.add(firstNameValue, 1, 1);
 
         Text lastName = new Text("last name:");
         lastName.getStyleClass().add("info-grid");
-        info.add(lastName, 0, 1);
+        info.add(lastName, 0, 2);
 
         Text lastNameValue = new Text(((Seller) User.getActiveUser()).getLastName());
         lastNameValue.getStyleClass().add("info-grid");
-        info.add(lastNameValue, 1, 1);
+        info.add(lastNameValue, 1, 2);
 
         Text phone = new Text("phone number:");
         phone.getStyleClass().add("info-grid");
-        info.add(phone, 0, 2);
+        info.add(phone, 0, 3);
 
-        Text phoneValue = new Text(((Seller)User.getActiveUser()).getPhoneNumber());
+        Text phoneValue = new Text(((Seller) User.getActiveUser()).getPhoneNumber());
         phoneValue.getStyleClass().add("info-grid");
-        info.add(phoneValue, 1, 2);
+        info.add(phoneValue, 1, 3);
 
         Text email = new Text("Email:");
         email.getStyleClass().add("info-grid");
-        info.add(email, 0, 3);
+        info.add(email, 0, 4);
 
-        Text emailValue = new Text(((Seller)User.getActiveUser()).getEmail());
+        Text emailValue = new Text(((Seller) User.getActiveUser()).getEmail());
         emailValue.getStyleClass().add("info-grid");
-        info.add(emailValue, 1, 3);
+        info.add(emailValue, 1, 4);
 
-        info.add(new Text("credit:"),0,4);
-        info.add(new Text(""+((Seller)User.getActiveUser()).getCredit()),1,4);
+        info.add(new Text("credit:"), 0, 5);
+        info.add(new Text("" + ((Seller) User.getActiveUser()).getCredit()), 1, 5);
 
         info.setMinSize(200, 200);
 
@@ -139,32 +142,32 @@ public class SellerPanel extends Menu {
         pane.getChildren().add(info);
     }
 
-    public Menu editProfile(){
+    public Menu editProfile() {
         return new Menu(new ScrollPane()) {
             @Override
             public void init() {
-                GridPane form=new GridPane();
+                GridPane form = new GridPane();
                 pane.getChildren().add(form);
                 form.setVgap(25);
                 form.setHgap(100);
 
-                AnchorPane.setLeftAnchor(form,300.0);
-                AnchorPane.setTopAnchor(form,100.0);
-                AnchorPane.setBottomAnchor(form,100.0);
+                AnchorPane.setLeftAnchor(form, 300.0);
+                AnchorPane.setTopAnchor(form, 100.0);
+                AnchorPane.setBottomAnchor(form, 100.0);
 
-                ArrayList<Label> alerts=new ArrayList<>();
+                ArrayList<Label> alerts = new ArrayList<>();
 
 
-                Text password=new Text("password : ");
-                form.add(password,0,2);
+                Text password = new Text("password : ");
+                form.add(password, 0, 2);
 
-                PasswordField passwordField=new PasswordField();
+                PasswordField passwordField = new PasswordField();
                 passwordField.setPromptText("enter password...");
                 passwordField.setText(User.getActiveUser().getPassword());
-                form.add(passwordField,1,2);
+                form.add(passwordField, 1, 2);
 
-                Label invalidPass=new Label("*password can only contain a-z A-Z _ 0-9");
-                form.add(invalidPass,1,3,2,1);
+                Label invalidPass = new Label("*password can only contain a-z A-Z _ 0-9");
+                form.add(invalidPass, 1, 3, 2, 1);
                 alerts.add(invalidPass);
 
                 passwordField.textProperty().addListener(new ChangeListener<String>() {
@@ -174,16 +177,16 @@ public class SellerPanel extends Menu {
                     }
                 });
 
-                Text confirm=new Text("confirm password : ");
-                form.add(confirm,0,4);
+                Text confirm = new Text("confirm password : ");
+                form.add(confirm, 0, 4);
 
-                PasswordField passConfirm=new PasswordField();
+                PasswordField passConfirm = new PasswordField();
                 passConfirm.setPromptText("confirm password...");
                 passConfirm.setText(User.getActiveUser().getPassword());
-                form.add(passConfirm,1,4);
+                form.add(passConfirm, 1, 4);
 
-                Label notMatchingPass=new Label("*password and confirmation don't match");
-                form.add(notMatchingPass,1,5,2,1);
+                Label notMatchingPass = new Label("*password and confirmation don't match");
+                form.add(notMatchingPass, 1, 5, 2, 1);
                 alerts.add(notMatchingPass);
 
                 passConfirm.textProperty().addListener(new ChangeListener<String>() {
@@ -193,32 +196,32 @@ public class SellerPanel extends Menu {
                     }
                 });
 
-                Text fName=new Text("first name : ");
-                form.add(fName,0,6);
+                Text fName = new Text("first name : ");
+                form.add(fName, 0, 6);
 
-                TextField fNameField=new TextField();
+                TextField fNameField = new TextField();
                 fNameField.setPromptText("first name...");
                 fNameField.setText(User.getActiveUser().getFirstName());
-                form.add(fNameField,1,6);
+                form.add(fNameField, 1, 6);
 
-                Text lName=new Text("last name : ");
-                form.add(lName,0,8);
+                Text lName = new Text("last name : ");
+                form.add(lName, 0, 8);
 
-                TextField lNameField=new TextField();
+                TextField lNameField = new TextField();
                 lNameField.setPromptText("last name...");
                 lNameField.setText(User.getActiveUser().getLastName());
-                form.add(lNameField,1,8);
+                form.add(lNameField, 1, 8);
 
-                Text email=new Text("Email : ");
-                form.add(email,0,10);
+                Text email = new Text("Email : ");
+                form.add(email, 0, 10);
 
-                TextField emailField=new TextField();
+                TextField emailField = new TextField();
                 emailField.setPromptText("Email...");
                 emailField.setText(User.getActiveUser().getEmail());
-                form.add(emailField,1,10);
+                form.add(emailField, 1, 10);
 
-                Label invalidEmail=new Label("*please enter a valid email");
-                form.add(invalidEmail,1,11,2,1);
+                Label invalidEmail = new Label("*please enter a valid email");
+                form.add(invalidEmail, 1, 11, 2, 1);
                 alerts.add(invalidEmail);
 
                 emailField.textProperty().addListener(new ChangeListener<String>() {
@@ -228,16 +231,16 @@ public class SellerPanel extends Menu {
                     }
                 });
 
-                Text phone=new Text("phone number : ");
-                form.add(phone,0,12);
+                Text phone = new Text("phone number : ");
+                form.add(phone, 0, 12);
 
-                TextField phoneField=new TextField();
+                TextField phoneField = new TextField();
                 phoneField.setPromptText("phone number...");
                 phoneField.setText(User.getActiveUser().getPhoneNumber());
-                form.add(phoneField,1,12);
+                form.add(phoneField, 1, 12);
 
-                Label invalidPhone=new Label("*please enter a valid phone number");
-                form.add(invalidPhone,1,13,2,1);
+                Label invalidPhone = new Label("*please enter a valid phone number");
+                form.add(invalidPhone, 1, 13, 2, 1);
                 alerts.add(invalidPhone);
 
                 phoneField.textProperty().addListener(new ChangeListener<String>() {
@@ -249,46 +252,48 @@ public class SellerPanel extends Menu {
                     }
                 });
 
-                Text credit=new Text("initial credit : ");
-                form.add(credit,0,14);
+                Text credit = new Text("initial credit : ");
+                form.add(credit, 0, 14);
 
-                TextField creditField=new TextField();
+                TextField creditField = new TextField();
                 creditField.setPromptText("credit...");
-                creditField.setText(""+User.getActiveUser().getCredit());
-                form.add(creditField,1,14);
+                creditField.setText("" + User.getActiveUser().getCredit());
+                form.add(creditField, 1, 14);
 
-                Button getImage=new Button("upload profile picture");
-                form.add(getImage,0,16);
+                Button getImage = new Button("upload profile picture");
+                form.add(getImage, 0, 16);
 
-                FileChooser imageChooser=new FileChooser();
+                file = null;
+
+                FileChooser imageChooser = new FileChooser();
 
                 getImage.setOnAction(event -> setFile(imageChooser.showOpenDialog(App.getMainStage())));
 
-                Text corporate=new Text("corporate : ");
-                form.add(corporate,0,19);
+                Text corporate = new Text("corporate : ");
+                form.add(corporate, 0, 19);
 
-                TextField corporateField=new TextField();
+                TextField corporateField = new TextField();
                 corporateField.setPromptText("corporate...");
-                corporateField.setText(((Seller)User.getActiveUser()).getFactory());
-                form.add(corporateField,1,19);
+                corporateField.setText(((Seller) User.getActiveUser()).getFactory());
+                form.add(corporateField, 1, 19);
 
 
-                alerts.forEach((alert)->alert.setVisible(false));
+                alerts.forEach((alert) -> alert.setVisible(false));
 
-                Label emptyField=new Label("*please make sure no field is left empty");
+                Label emptyField = new Label("*please make sure no field is left empty");
                 emptyField.setVisible(false);
-                form.add(emptyField,1,21,2,1);
+                form.add(emptyField, 1, 21, 2, 1);
 
-                Button submit=new Button("submit");
-                form.add(submit,1,20);
+                Button submit = new Button("submit");
+                form.add(submit, 1, 20);
                 submit.setOnAction(event -> {
                     emptyField.setVisible(false);
                     if ((((passwordField.getText().isEmpty()) || passConfirm.getText().isEmpty()) || creditField.getText().isEmpty() || fNameField.getText().isEmpty())
                             || lNameField.getText().isEmpty() || emailField.getText().isEmpty() || phoneField.getText().isEmpty() || corporateField.getText().isEmpty()) {
                         emptyField.setVisible(true);
                         return;
-                    }else {
-                        for(Label alert:alerts){
+                    } else {
+                        for (Label alert : alerts) {
                             if (alert.isVisible())
                                 return;
                         }
@@ -299,15 +304,14 @@ public class SellerPanel extends Menu {
                     User.getActiveUser().setEmail(emailField.getText());
                     User.getActiveUser().setPhoneNumber(phoneField.getText());
                     User.getActiveUser().setCredit(Float.parseFloat(creditField.getText()));
-                    ((Seller)User.getActiveUser()).setFactory(corporateField.getText());
-                    if (file!=null){
-                        User.getActiveUser().setProfile(new Image(file.toURI().toString()));
+                    ((Seller) User.getActiveUser()).setFactory(corporateField.getText());
+                    if (file != null) {
+                        User.getActiveUser().setProfile(file.toURI().toString());
                     }
-                    User.getActiveUser().setProfile(new Image(file.toURI().toString()));
                 });
 
-                Button back=new Button("return");
-                form.add(back,1,22);
+                Button back = new Button("return");
+                form.add(back, 1, 22);
                 back.setOnAction(event -> App.getMainStage().setScene(new SellerPanel(new ScrollPane())));
 
                 App.getMainStage().getScene().getStylesheets().add("userpanel.css");
@@ -327,9 +331,11 @@ public class SellerPanel extends Menu {
 
 
                 ObservableList<Product> products = FXCollections.observableArrayList();
-                // products.addAll(((Seller)User.getActiveUser()).getArrayProduct()); right one
-                products.addAll(Product.getAllProducts()); //wrong one
+                products.addAll(((Seller) User.getActiveUser()).getArrayProduct());
                 productTableView.setItems(products);
+
+                TableColumn<Product, ImageView> imageColumn = new TableColumn<>("picture");
+                imageColumn.setCellValueFactory(new PropertyValueFactory<>("picture"));
 
                 TableColumn<Product, String> nameColumn = new TableColumn<>("name");
                 nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -348,7 +354,7 @@ public class SellerPanel extends Menu {
                 buyerColumn.setCellValueFactory(new PropertyValueFactory<>("listOfBuyers"));
 
 
-                productTableView.getColumns().addAll(nameColumn, brandColumn, categoryColumn, priceColumn, buyerColumn);
+                productTableView.getColumns().addAll(imageColumn, nameColumn, brandColumn, categoryColumn, priceColumn, buyerColumn);
 
                 HBox buttons = new HBox();
 
@@ -357,14 +363,24 @@ public class SellerPanel extends Menu {
 
                 Button delete = new Button("delete");
                 delete.setOnAction(event -> {
-                    Product.removeProduct(productTableView.getSelectionModel().getSelectedItem());
-                    products.clear();
-                    products.addAll(Product.getAllProducts());
-                    productTableView.setItems(products);
+                    if (productTableView.getSelectionModel().getSelectedItem() != null) {
+                        Product.removeProduct(productTableView.getSelectionModel().getSelectedItem());
+                        products.clear();
+                        products.addAll(Product.getAllProducts());
+                        productTableView.setItems(products);
+                    } else {
+                        new Alert(Alert.AlertType.ERROR, "no product is chosen").show();
+                    }
                 });
 
                 Button edit = new Button("edit");
-                edit.setOnAction(event -> App.getMainStage().setScene(editProduct(productTableView.getSelectionModel().getSelectedItem())));
+                edit.setOnAction(event -> {
+                    if (productTableView.getSelectionModel().getSelectedItem() != null) {
+                        App.getMainStage().setScene(editProduct(productTableView.getSelectionModel().getSelectedItem()));
+                    } else {
+                        new Alert(Alert.AlertType.ERROR, "no product is chosen").show();
+                    }
+                });
 
                 Button back = new Button("return");
                 back.setOnAction(event -> App.getMainStage().setScene(new SellerPanel(new ScrollPane())));
@@ -430,6 +446,9 @@ public class SellerPanel extends Menu {
                 categoryChoiceBox.setItems(categoryObservableList);
                 form.add(categoryChoiceBox, 1, 2);
 
+                Button choose=new Button("choose category");
+                form.add(choose,2,2);
+
                 VBox attributeTexts = new VBox();
                 VBox attributeTextFields = new VBox();
 
@@ -439,24 +458,25 @@ public class SellerPanel extends Menu {
                 form.add(attributeTexts, 0, 3);
                 form.add(attributeTextFields, 1, 3);
 
-                categoryChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                        ArrayList<String> attributes = categoryChoiceBox.getSelectionModel().getSelectedItem().getSpecialAttributes();
+                choose.setOnAction(event -> {
+                    if (categoryChoiceBox.getSelectionModel().getSelectedItem()!=null){
+                    ArrayList<String> attributes = categoryChoiceBox.getSelectionModel().getSelectedItem().getSpecialAttributes();
 
-                        attributeTexts.getChildren().clear();
-                        attributeTextFields.getChildren().clear();
+                    attributeTexts.getChildren().clear();
+                    attributeTextFields.getChildren().clear();
 
-                        for (String text : attributes) {
-                            attributeTexts.getChildren().add(new Text(text + " : "));
+                    for (String text : attributes) {
+                        attributeTexts.getChildren().add(new Text(text + " : "));
 
-                            TextField textField = new TextField();
-                            textField.setPromptText(text + "...");
-                            attributeTextFields.getChildren().add(textField);
-                        }
-
+                        TextField textField = new TextField();
+                        textField.setPromptText(text + "...");
+                        attributeTextFields.getChildren().add(textField);
+                    }
+                }else {
+                        new Alert(Alert.AlertType.ERROR,"no category choosen").show();
                     }
                 });
+
 
                 Text explanation = new Text("explanations : ");
                 form.add(explanation, 0, 4);
@@ -467,12 +487,12 @@ public class SellerPanel extends Menu {
 
                 Button getImage = new Button("upload image");
                 form.add(getImage, 0, 5);
+                file = null;
 
                 FileChooser imageChooser = new FileChooser();
-                File file = null;
 
                 getImage.setOnAction(event -> {
-                    setFile( imageChooser.showOpenDialog(App.getMainStage()));
+                    setFile(imageChooser.showOpenDialog(App.getMainStage()));
                 });
 
                 pane.getChildren().add(form);
@@ -518,12 +538,15 @@ public class SellerPanel extends Menu {
                     }
 
                     new ProductAdditionRequest((Seller) User.getActiveUser(), idValue.getText(), Float.parseFloat(priceField.getText()),
-                            categoryChoiceBox.getSelectionModel().getSelectedItem(), attributesHashMap, explanationArea.getText(), new Image(file.toURI().toString()));
+                            categoryChoiceBox.getSelectionModel().getSelectedItem(), attributesHashMap, explanationArea.getText(), file.toURI().toString());
+                    new Alert(Alert.AlertType.INFORMATION,"request successfully sent").show();
+                    App.getMainStage().setScene(manageProducts());
 
                 });
 
                 buttons.getChildren().addAll(back, submit);
                 buttons.setSpacing(10);
+
             }
         };
     }
@@ -644,10 +667,11 @@ public class SellerPanel extends Menu {
                 Button getImage = new Button("upload picture");
                 form.add(getImage, 0, 5);
 
-                FileChooser imageChooser = new FileChooser();
-                File file = null;
+                file=null;
 
-                getImage.setOnAction(event -> setFile( imageChooser.showOpenDialog(App.getMainStage())));
+                FileChooser imageChooser = new FileChooser();
+
+                getImage.setOnAction(event -> setFile(imageChooser.showOpenDialog(App.getMainStage())));
 
                 pane.getChildren().add(form);
 
@@ -686,13 +710,10 @@ public class SellerPanel extends Menu {
                         attributesHashMap.put(categoryAttributes.get(i), ((TextField) attributeTextFields.getChildren().get(i)).getText());
                     }
 
-                    if (file == null) {
-                        alert.show();
-                        return;
-                    }
 
                     new ProductEditRequest((Seller) User.getActiveUser(), product, Float.parseFloat(priceField.getText()),
-                            categoryChoiceBox.getSelectionModel().getSelectedItem(), attributesHashMap, explanationArea.getText(), new Image(file.toURI().toString()));
+                            categoryChoiceBox.getSelectionModel().getSelectedItem(), attributesHashMap, explanationArea.getText(),
+                            (file == null) ? product.getPicturePath() : file.toURI().toString());
 
                 });
 
@@ -755,6 +776,8 @@ public class SellerPanel extends Menu {
                 AnchorPane.setLeftAnchor(form, 300.0);
                 AnchorPane.setTopAnchor(form, 100.0);
 
+                pane.getChildren().add(form);
+
                 Text id = new Text("id : ");
                 form.add(id, 0, 0);
 
@@ -811,8 +834,8 @@ public class SellerPanel extends Menu {
 
                 VBox productChoices = new VBox();
                 for (Product product : ((Seller) User.getActiveUser()).getArrayProduct()) {
-                    if (product.getAssignedOff()==null)
-                    productChoices.getChildren().add(new CheckBox(product.getProductId()));
+                    if (product.getAssignedOff() == null)
+                        productChoices.getChildren().add(new CheckBox(product.getProductId()));
                 }
                 productChoices.setSpacing(5);
                 form.add(productChoices, 1, 4);
@@ -855,13 +878,14 @@ public class SellerPanel extends Menu {
         };
     }
 
-    public Menu editOff(Off off){
+    public Menu editOff(Off off) {
         return new Menu(new ScrollPane()) {
             @Override
             public void init() {
                 GridPane form = new GridPane();
                 AnchorPane.setLeftAnchor(form, 300.0);
                 AnchorPane.setTopAnchor(form, 100.0);
+                pane.getChildren().add(form);
 
                 Text id = new Text("id : ");
                 form.add(id, 0, 0);
@@ -874,7 +898,7 @@ public class SellerPanel extends Menu {
                 form.add(percent, 0, 1);
 
                 TextField percentField = new TextField();
-                percentField.setText(""+off.getOffAmount());
+                percentField.setText("" + off.getOffAmount());
                 percentField.setPromptText("percent...");
                 form.add(percentField, 1, 1);
                 percentField.textProperty().addListener(new ChangeListener<String>() {
@@ -919,7 +943,7 @@ public class SellerPanel extends Menu {
 
                 VBox productChoices = new VBox();
                 for (Product product : ((Seller) User.getActiveUser()).getArrayProduct()) {
-                    if (product.getAssignedOff()==null || product.getAssignedOff().equals(off)) {
+                    if (product.getAssignedOff() == null || product.getAssignedOff().equals(off)) {
                         CheckBox checkBox = new CheckBox(product.getProductId());
                         if (off.getProductsArray().contains(product)) {
                             checkBox.setSelected(true);
@@ -956,7 +980,7 @@ public class SellerPanel extends Menu {
                                                if (selected.isEmpty()) {
                                                    alert.setVisible(true);
                                                } else {
-                                                   new OffEditRequest(off,((Seller) User.getActiveUser()), selected,
+                                                   new OffEditRequest(off, ((Seller) User.getActiveUser()), selected,
                                                            startDatePicker.getValue().atStartOfDay(), stopDatePicker.getValue().atStartOfDay(), Integer.parseInt(percentField.getText()));
                                                }
                                            }
@@ -1076,7 +1100,7 @@ public class SellerPanel extends Menu {
         };
     }
 
-    public void setFile( File input) {
+    public void setFile(File input) {
         this.file = input;
     }
 }

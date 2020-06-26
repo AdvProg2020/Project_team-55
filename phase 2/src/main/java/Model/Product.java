@@ -24,10 +24,10 @@ public class Product {
     private Off assignedOff;
     private float priceAfterOff;
     private LocalDateTime creationDate;
-    private ImageView picture;
+    private String picture;
 
-    public Product(String productId, float price, Category category, HashMap<String,String> specialAttributes, String explanation, Seller seller, Image picture) {
-        this.name=specialAttributes.get("name");
+    public Product(String productId, float price, Category category, HashMap<String, String> specialAttributes, String explanation, Seller seller, String picture) {
+        this.name = specialAttributes.get("name");
         this.productId = productId;
         this.price = price;
         this.category = category;
@@ -36,7 +36,10 @@ public class Product {
         this.creationDate = LocalDateTime.now();
         this.explanation = explanation;
         this.seller = seller;
-        this.picture=new ImageView(picture);
+        this.picture = picture;
+//        this.picture.resize(100, 100);
+//        this.picture.setFitHeight(100);
+//        this.picture.setFitWidth(100);
         allProducts.add(this);
     }
 
@@ -52,8 +55,6 @@ public class Product {
     public static void removeProduct(Product product) {
         allProducts.remove(product);
     }
-
-
 
 
     public static ArrayList<Product> getAllProducts() {
@@ -159,11 +160,19 @@ public class Product {
     }
 
     public ImageView getPicture() {
-        return picture;
+        ImageView image=new ImageView(new Image(picture));
+        image.resize(100,100);
+        image.setFitWidth(100);
+        image.setFitHeight(100);
+        return image;
     }
 
-    public void setPicture(Image picture) {
-        this.picture.setImage(picture);
+    public void setPicture(String picture) {
+        this.picture=picture;
+    }
+
+    public String getPicturePath(){
+        return picture;
     }
 
     public ArrayList<Buyer> getListOfBuyers() {
@@ -178,22 +187,22 @@ public class Product {
         this.averageScore = averageScore;
     }
 
-    public String getRemainedTime(){
+    public String getRemainedTime() {
         return this.assignedOff.getRemainedTime();
     }
 
-    public int getOffPercent(){
+    public int getOffPercent() {
         return this.assignedOff.getOffAmount();
     }
 
-    public static void compare2Products(Product product1,Product product2) {
-        System.out.println("product "+product1.getProductId());
+    public static void compare2Products(Product product1, Product product2) {
+        System.out.println("product " + product1.getProductId());
         System.out.println(product1.toString());
-        System.out.println("\n\nproduct "+product2.getProductId());
+        System.out.println("\n\nproduct " + product2.getProductId());
         System.out.println(product2.toString());
     }
 
-    public String initialToString(){
+    public String initialToString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(productId + " " + specialAttributes.get("name") + "\nBrand: " + specialAttributes.get("brand"));
         stringBuilder.append("\ncategory: " + category.getName());
@@ -202,10 +211,11 @@ public class Product {
             stringBuilder.append("\tprice after " + assignedOff.getOffAmount() + "% off: " + priceAfterOff);
         if (existence) stringBuilder.append("\nstatus: available");
         else stringBuilder.append("\nstatus: unavailable");
-        stringBuilder.append("\naverage score: "+averageScore);
+        stringBuilder.append("\naverage score: " + averageScore);
         stringBuilder.append('\n' + explanation);
         return stringBuilder.toString();
     }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();

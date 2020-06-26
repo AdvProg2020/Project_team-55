@@ -15,6 +15,10 @@
     -fx-font-size: 16;
 }
 
+@font-face {
+    font-family: "caspa";
+    src: url("Casper.ttf");
+}
 
 
 .label {
@@ -22,9 +26,13 @@
     -fx-font-weight: bold;
     -fx-text-fill: #ff0000;
 }
-.pane{
-    -fx-background-image: url("bloody_background.jpg");
+
+.pane {
+    -fx-background-image: url("wallpaperflare.com_wallpaper.jpg");
+    -fx-background-size: cover;
+    -fx-background-repeat: inherit;
 }
-.navbar{
+
+.navbar {
     -fx-background-color: #a0cba9;
 }

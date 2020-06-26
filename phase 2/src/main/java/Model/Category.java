@@ -16,7 +16,7 @@ public class Category {
     public Category(String name, Category parentCategory, ArrayList specialAttributes) {
         this.name = name;
         this.parentCategory = parentCategory;
-        this.specialAttributes.addAll(specialAttributes);
+        this.specialAttributes=specialAttributes;
         if (parentCategory != null) {
             this.specialAttributes.addAll(0, parentCategory.getSpecialAttributes());
             parentCategory.subCategories.add(this);

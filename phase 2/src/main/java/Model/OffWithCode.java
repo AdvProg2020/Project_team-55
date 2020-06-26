@@ -29,19 +29,7 @@ public class OffWithCode {
         }
         allDiscounts.add(this);
 
-        OffWithCode discount=this;
-
-        new Thread(){
-            @Override
-            public void run() {
-                while (true){
-                    if (LocalDateTime.now().isBefore(stopDate)){
-                        allDiscounts.remove(discount);
-                        break;
-                    }
-                }
-            }
-        }.start();
+        startCountdown();
     }
 
 
@@ -166,6 +154,24 @@ public class OffWithCode {
 
     public void useByUser(Buyer buyer){
         this.applyingAccounts.put(buyer,applyingAccounts.get(buyer)-1);
+    }
+
+    public void startCountdown(){
+        OffWithCode discount=this;
+        new Thread(){
+            @Override
+            public void run() {
+                while (true){
+                    if (LocalDateTime.now().isAfter(startDate)){
+                        active=true;
+                    }
+                    if (LocalDateTime.now().isBefore(stopDate)){
+                        allDiscounts.remove(discount);
+                        break;
+                    }
+                }
+            }
+        }.start();
     }
 
     public static void updateDiscounts() {

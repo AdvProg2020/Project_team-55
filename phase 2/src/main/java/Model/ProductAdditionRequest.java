@@ -12,11 +12,11 @@ public class ProductAdditionRequest extends Request {
     private float price;
     private Category category;
     private String explanation;
-    private Image picture;
+    private String picture;
     private HashMap<String, String> specialAttributes;
 
 
-    public ProductAdditionRequest(Seller sender, String productId, float price, Category category, HashMap<String, String> specialAttributes, String explanation, Image picture) {
+    public ProductAdditionRequest(Seller sender, String productId, float price, Category category, HashMap<String, String> specialAttributes, String explanation, String picture) {
         this.productId = productId;
         this.sender = sender;
         this.price = price;
@@ -61,7 +61,11 @@ public class ProductAdditionRequest extends Request {
     }
 
     public ImageView getPicture() {
-        return new ImageView(picture);
+        ImageView imageView=new ImageView(new Image(picture));
+        imageView.resize(100,100);
+        imageView.setFitWidth(100);
+        imageView.setFitHeight(100);
+        return imageView;
     }
 
     @Override

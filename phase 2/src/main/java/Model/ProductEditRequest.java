@@ -15,9 +15,9 @@ public class ProductEditRequest extends Request {
     private Category category;
     private boolean existence;
     private String explanation;
-    private Image picture;
+    private String picture;
 
-    public ProductEditRequest(Seller sender, Product product, float price, Category category, HashMap<String, String> specialAttributes, String explanation, Image picture) {
+    public ProductEditRequest(Seller sender, Product product, float price, Category category, HashMap<String, String> specialAttributes, String explanation, String picture) {
         this.product=product;
         this.sender = sender;
         this.price = price;
@@ -56,7 +56,11 @@ public class ProductEditRequest extends Request {
     }
 
     public ImageView getPicture() {
-        return new ImageView(picture);
+        ImageView image=new ImageView(new Image(picture));
+        image.resize(100,100);
+        image.setFitHeight(100);
+        image.setFitWidth(100);
+        return image;
     }
 
     public HashMap<String, String> getRequestedChange() {

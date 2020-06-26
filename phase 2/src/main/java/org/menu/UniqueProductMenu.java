@@ -16,18 +16,24 @@ import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
 
 public class UniqueProductMenu extends Menu{
-    private Product product;
-    private Scene previousPage;
+
 
     public UniqueProductMenu(ScrollPane root, Product product,Scene previousPage) {
-        super(root);
-        this.product=product;
-        this.previousPage=previousPage;
+        super(root,product,previousPage);
+
     }
 
     @Override
     public void init() {
         VBox content=new VBox();
+
+        TabPane productsTabPane=new TabPane();
+
+        Tab mainProduct=new Tab(product.getProductId());
+        mainProduct.setClosable(false);
+        mainProduct.setContent(content);
+
+        productsTabPane.getTabs().add(mainProduct);
 
         Button back=new Button("return");
         back.setOnAction(event -> App.getMainStage().setScene(previousPage));
@@ -77,6 +83,7 @@ public class UniqueProductMenu extends Menu{
             Tab sideProducts=new Tab();
             sideProducts.setClosable(true);
             sideProducts.setContent(new ProductMenu(new ScrollPane()).getRoot());
+            productsTabPane.getTabs().add(sideProducts);
         });
         header.add(compare,1,4);
 
@@ -127,13 +134,7 @@ public class UniqueProductMenu extends Menu{
 
         content.getChildren().add(commentTable);
 
-        TabPane productsTabPane=new TabPane();
 
-        Tab mainProduct=new Tab(product.getProductId());
-        mainProduct.setClosable(false);
-        mainProduct.setContent(content);
-
-        productsTabPane.getTabs().add(mainProduct);
 
         pane.getChildren().add(productsTabPane);
 

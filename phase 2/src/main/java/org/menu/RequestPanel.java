@@ -2,6 +2,7 @@ package org.menu;
 
 import Model.*;
 import javafx.collections.FXCollections;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -15,20 +16,30 @@ public class RequestPanel extends Menu{
 
     public RequestPanel(ScrollPane root,Request request) {
         super(root);
+        this.request=request;
+
+        Scene scene=null;
+
+        if (request instanceof ProductAdditionRequest) {
+            System.out.println("product addition");
+            scene=productAddition();
+        } else if (request instanceof ProductEditRequest) {
+            System.out.println("roduct edit");
+            scene=productEdit();
+        } else if (request instanceof OffAdditionRequest) {
+            scene=offAddition();
+        } else if (request instanceof OffEditRequest) {
+            scene=offEdit();
+        } else if (request instanceof SellerAdditionRequest) {
+            scene=sellerAddition();
+        }
+
+        App.getMainStage().setScene(scene);
     }
 
     @Override
     public void init() {
-        if (request instanceof ProductAdditionRequest)
-           App.getMainStage().setScene(productAddition());
-        else if (request instanceof ProductEditRequest)
-            App.getMainStage().setScene(productEdit());
-        else if (request instanceof OffAdditionRequest)
-            App.getMainStage().setScene(offAddition());
-        else if (request instanceof OffEditRequest)
-            App.getMainStage().setScene(offEdit());
-        else if (request instanceof SellerAdditionRequest)
-            App.getMainStage().setScene(sellerAddition());
+
     }
 
     public Menu productAddition(){
@@ -39,7 +50,7 @@ public class RequestPanel extends Menu{
                 ProductAdditionRequest product= (ProductAdditionRequest) request;
 
                 VBox content=new VBox();
-                pane.getChildren().add(content);
+                content.setSpacing(5);
 
                 Button back=new Button("return");
                 back.setOnAction(event -> App.getMainStage().setScene(new ManagerPanel(new ScrollPane())));
@@ -53,7 +64,7 @@ public class RequestPanel extends Menu{
                 Button decline=new Button("decline request");
                 decline.setOnAction(event -> {
                     product.declineRequest();
-                    new Alert(Alert.AlertType.INFORMATION,"request rejected");
+                    new Alert(Alert.AlertType.INFORMATION,"request rejected").show();
                     App.getMainStage().setScene(new ManagerPanel(new ScrollPane()).manageRequests());
                 });
 
@@ -76,7 +87,15 @@ public class RequestPanel extends Menu{
                     info.getItems().add(attribute+": "+product.getSpecialAttributes().get(attribute));
                 }
 
+                pane.getChildren().add(content);
+
                 content.getChildren().add(info);
+
+                content.getChildren().add(new Text("hello"));
+
+                pane.getChildren().add(new Text("how are you"));
+
+
 
             }
         };
@@ -161,6 +180,8 @@ public class RequestPanel extends Menu{
                 TabPane compare=new TabPane();
                 compare.getTabs().addAll(before,after);
 
+                pane.getChildren().add(compare);
+
             }
         };
     }
@@ -204,6 +225,8 @@ public class RequestPanel extends Menu{
                 ListView<Product> productListView=new ListView<>();
                 productListView.setItems(FXCollections.observableArrayList(additionRequest.getProductsArray()));
                 gridPane.add(productListView,1,4);
+
+                pane.getChildren().add(content);
             }
         };
     }
@@ -272,6 +295,13 @@ public class RequestPanel extends Menu{
                 ListView<Product> afterProductListView=new ListView<>();
                 afterProductListView.setItems(FXCollections.observableArrayList(editRequest.getProductsArray()));
                 afterGrid.add(afterProductListView,1,4);
+
+                TabPane compare=new TabPane();
+                compare.getTabs().addAll(before,after);
+
+                content.getChildren().add(compare);
+
+                pane.getChildren().addAll(content);
 
             }
         };

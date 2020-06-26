@@ -13,7 +13,7 @@ public class Seller extends User {
     private ArrayList<SellLog> sellHistory = new ArrayList<SellLog>();
     private static LinkedList<Seller> allSellers=new LinkedList<>();
 
-    public Seller(String factory, String userName, String firstName, String lastName, String email, String phoneNumber, String password, float credit, Image profile) {
+    public Seller(String factory, String userName, String firstName, String lastName, String email, String phoneNumber, String password, float credit, String profile) {
         super(userName,firstName,lastName,email,phoneNumber,password,profile);
         this.factory=factory;
         this.credit = credit;

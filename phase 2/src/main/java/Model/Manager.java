@@ -10,7 +10,7 @@ public class Manager extends User {
     private static Manager mainManager;
     private static LinkedList<Manager> subManagers=new LinkedList<>();
 
-    public Manager(String userName, String firstName, String lastName, String email, String phoneNumber, String password, Image profile) {
+    public Manager(String userName, String firstName, String lastName, String email, String phoneNumber, String password, String profile) {
         super(userName,firstName,lastName,email,phoneNumber,password,profile);
         if (mainManager==null)mainManager=this;
         else subManagers.add(this);

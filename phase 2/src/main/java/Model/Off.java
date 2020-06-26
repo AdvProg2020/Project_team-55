@@ -126,6 +126,9 @@ public class Off {
                 long now;
                 LocalDateTime fromDateTime=LocalDateTime.from(startDate);
                 while (LocalDateTime.now().isAfter(stopDate)){
+                    if (!LocalDateTime.now().isAfter(startDate)){
+                        active=true;
+                    }
                     now=System.currentTimeMillis();
                     if (now-lastUpdate>=500){
                         lastUpdate=now;

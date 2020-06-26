@@ -17,24 +17,26 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoginPanel extends Menu{
-    public LoginPanel(ScrollPane root,Scene previousScene) {
+    public LoginPanel(ScrollPane root,Menu previousScene) {
         super(root);
         this.previousScene=previousScene;
     }
     private String olgo = ("(\\w)*");
-    private Scene previousScene;
+    private Menu previousScene;
     @Override
     public void init() {
 
+        GridPane form=new GridPane();
+
         Text passText=new Text("password");
-        passText.relocate(30,70);
+        form.add(passText,0,2);
 
         PasswordField passwordField=new PasswordField();
-        passwordField.relocate(70,70);
+        form.add(passwordField,1,2);
         passwordField.setPromptText("enter your password...");
 
         Label invalidPass=new Label(" password can only contain a-z A-Z _ 0-9.");
-        invalidPass.relocate(70,75);
+        form.add(invalidPass,1,3);
         invalidPass.setVisible(false);
 
         passwordField.textProperty().addListener(new ChangeListener<String>() {
@@ -54,14 +56,14 @@ public class LoginPanel extends Menu{
 
 
         Text user=new Text("username");
-        user.relocate(30,50);
+        form.add(user,0,0);
         TextField username=new TextField();
-        username.relocate(70,50);
+        form.add(username,1,0);
         username.setPromptText("enter username...");
 
         Label invalidUser=new Label("username can only contain a-z A-Z _ 0-9 .");
         invalidUser.setVisible(false);
-        invalidUser.relocate(70,55);
+        form.add(invalidUser,1,1);
 
         username.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -76,7 +78,7 @@ public class LoginPanel extends Menu{
         });
 
         Button submit=new Button("login");
-        submit.relocate(30,85);
+        form.add(submit,0,4);
         submit.setOnAction(event -> {
             if (invalidUser.isVisible() || invalidPass.isVisible()){
                return;
@@ -85,19 +87,20 @@ public class LoginPanel extends Menu{
             }else if (User.getAccountByUserName(username.getText())==null){
                 new Alert(Alert.AlertType.ERROR,"no user with this username is found").show();
             }else if (!User.getAccountByUserName(username.getText()).getPassword().equals(passwordField.getText())){
-                new Alert(Alert.AlertType.ERROR,"wrong password");
+                new Alert(Alert.AlertType.ERROR,"wrong password").show();
             }else {
                 Alert alert=new Alert(Alert.AlertType.INFORMATION,"Login was successful ♥");
                 alert.show();
 
                 User.setActiveUser(User.getAccountByUserName(username.getText()));
+                previousScene.manifestNavbar();
                 App.getMainStage().setScene(previousScene);
             }
         });
 
 
 
-        pane.getChildren().addAll(passText,passwordField,invalidPass,user,username,invalidUser,submit);
+        pane.getChildren().addAll(form);
 
 
             }//inIn

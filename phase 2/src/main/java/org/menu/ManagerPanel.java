@@ -47,11 +47,14 @@ public class ManagerPanel extends Menu {
     public void getCommandList() {
         VBox commands = new VBox();
         commands.setPrefSize(200, 600);
-        commands.setLayoutY(300);
+        commands.setLayoutY(100);
 
         AnchorPane.setBottomAnchor(commands, 0.0);
 
-        ImageView profile=new ImageView(User.getActiveUser().getProfile());
+        ImageView profile = new ImageView(User.getActiveUser().getProfile());
+        profile.resize(300, 300);
+        profile.setFitWidth(300);
+        profile.setFitHeight(300);
 
         Button edit = new Button("edit profile");
         edit.getStyleClass().add("command");
@@ -88,8 +91,9 @@ public class ManagerPanel extends Menu {
         Button manageRequests = new Button("manageRequests");
         manageRequests.setPrefSize(200, 50);
         manageRequests.getStyleClass().add("command");
+        manageRequests.setOnAction(event -> App.getMainStage().setScene(manageRequests()));
 
-        commands.getChildren().addAll(profile,edit, manageUsers, manageCategories, manageProducts,
+        commands.getChildren().addAll(profile, edit, manageUsers, manageCategories, manageProducts,
                 createDiscount, viewDiscounts, manageRequests);
 
         pane.getChildren().add(commands);
@@ -104,37 +108,39 @@ public class ManagerPanel extends Menu {
         info.setLayoutY(200);
         info.setAlignment(Pos.CENTER);
 
+        info.add(new Text("manager: "+User.getActiveUser().getUsername()),0,0);
+
         Text firstName = new Text("first name:");
         firstName.getStyleClass().add("info-grid");
-        info.add(firstName, 0, 0);
+        info.add(firstName, 0, 1);
 
         Text firstNameValue = new Text(User.getActiveUser().getFirstName());
         firstNameValue.getStyleClass().add("info-grid");
-        info.add(firstNameValue, 1, 0);
+        info.add(firstNameValue, 1, 1);
 
         Text lastName = new Text("last name:");
         lastName.getStyleClass().add("info-grid");
-        info.add(lastName, 0, 1);
+        info.add(lastName, 0, 2);
 
         Text lastNameValue = new Text(User.getActiveUser().getLastName());
         lastNameValue.getStyleClass().add("info-grid");
-        info.add(lastNameValue, 1, 1);
+        info.add(lastNameValue, 1, 2);
 
         Text phone = new Text("phone number:");
         phone.getStyleClass().add("info-grid");
-        info.add(phone, 0, 2);
+        info.add(phone, 0, 3);
 
         Text phoneValue = new Text(User.getActiveUser().getPhoneNumber());
         phoneValue.getStyleClass().add("info-grid");
-        info.add(phoneValue, 1, 2);
+        info.add(phoneValue, 1, 3);
 
         Text email = new Text("Email:");
         email.getStyleClass().add("info-grid");
-        info.add(email, 0, 3);
+        info.add(email, 0, 4);
 
         Text emailValue = new Text(User.getActiveUser().getEmail());
         emailValue.getStyleClass().add("info-grid");
-        info.add(emailValue, 1, 3);
+        info.add(emailValue, 1, 4);
 
         info.setMinSize(200, 200);
 
@@ -290,8 +296,8 @@ public class ManagerPanel extends Menu {
                     User.getActiveUser().setLastName(lNameField.getText());
                     User.getActiveUser().setEmail(emailField.getText());
                     User.getActiveUser().setPhoneNumber(phoneField.getText());
-                    if (file!=null)
-                    User.getActiveUser().setProfile(new Image(file.toURI().toString()));
+                    if (file != null)
+                        User.getActiveUser().setProfile(file.toURI().toString());
                     new Alert(Alert.AlertType.INFORMATION, "profile successfully edited").show();
                     App.getMainStage().setScene(new ManagerPanel(new ScrollPane()));
                 });
@@ -316,22 +322,28 @@ public class ManagerPanel extends Menu {
                 TableView<User> userList = new TableView<>();
 
                 TableColumn<User, String> name = new TableColumn<>("username");
+                name.setPrefWidth(70);
                 name.setCellValueFactory(new PropertyValueFactory<>("username"));
 
-                TableColumn<User, String> role = new TableColumn<>("role");
-                role.setCellValueFactory(new PropertyValueFactory<>(getClass().getSimpleName()));
+                TableColumn<User, String> fNameColumn=new TableColumn<>("first name");
+                fNameColumn.setPrefWidth(70);
+                fNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
 
-                TableColumn<User, Void> select = new TableColumn<>();
-                select.setCellValueFactory(new PropertyValueFactory<>("select"));
+                TableColumn<User,String> lNameColumn=new TableColumn<>("last name");
+                lNameColumn.setPrefWidth(70);
+                lNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+
+                TableColumn<User,String> emailColumn=new TableColumn<>("email");
+                emailColumn.setPrefWidth(150);
+                emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+
+                TableColumn<User, String> role = new TableColumn<>("role");
+                role.setCellValueFactory(new PropertyValueFactory<>("role"));
 
                 ObservableList<User> users = FXCollections.observableArrayList();
                 users.addAll(User.getUsers());
                 userList.setItems(users);
-                userList.getColumns().addAll(name, role, select);
-
-                list.getChildren().add(userList);
-
-                pane.getChildren().add(list);
+                userList.getColumns().addAll(name, fNameColumn,lNameColumn,emailColumn,role);
 
                 Button cancel = new Button("return");
                 cancel.setOnAction(event -> {
@@ -352,9 +364,180 @@ public class ManagerPanel extends Menu {
 
                 });
 
-                pane.getChildren().add(delete);
+                Button createManager=new Button("create manager");
+                createManager.setOnAction(event -> App.getMainStage().setScene(createManager()));
 
-                stagePane.setContent(pane);
+                list.getChildren().addAll(cancel,delete,createManager,userList);
+
+                pane.getChildren().add(list);
+            }
+        };
+    }
+
+    public Menu createManager(){
+        return new Menu(new ScrollPane()) {
+            @Override
+            public void init() {
+                GridPane form = new GridPane();
+                pane.getChildren().add(form);
+                form.setVgap(25);
+                form.setHgap(100);
+
+                AnchorPane.setLeftAnchor(form, 300.0);
+                AnchorPane.setTopAnchor(form, 100.0);
+                AnchorPane.setBottomAnchor(form, 100.0);
+
+                ArrayList<Label> alerts = new ArrayList<>();
+
+                Text username = new Text("username :");
+                form.add(username, 0, 0);
+
+                TextField usernameField = new TextField();
+                usernameField.setPromptText("enter username...");
+                form.add(usernameField, 1, 0);
+
+                Label takenUsername = new Label("*this username is already taken");
+                form.add(takenUsername, 1, 1, 2, 1);
+                alerts.add(takenUsername);
+
+                Label invalidUsername = new Label("*username can only contain a-z A-Z _ 0-9");
+                form.add(invalidUsername, 1, 1, 2, 1);
+                alerts.add(invalidUsername);
+
+                usernameField.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        takenUsername.setVisible(User.getAccountByUserName(newValue) != null);
+                        invalidUsername.setVisible(!newValue.matches("\\w+"));
+                    }
+                });
+
+                Text password = new Text("password : ");
+                form.add(password, 0, 2);
+
+                PasswordField passwordField = new PasswordField();
+                passwordField.setPromptText("enter password...");
+                form.add(passwordField, 1, 2);
+
+                Label invalidPass = new Label("*password can only contain a-z A-Z _ 0-9");
+                form.add(invalidPass, 1, 3, 2, 1);
+                alerts.add(invalidPass);
+
+                passwordField.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        invalidPass.setVisible(!newValue.matches("\\w+"));
+                    }
+                });
+
+                Text confirm = new Text("confirm password : ");
+                form.add(confirm, 0, 4);
+
+                PasswordField passConfirm = new PasswordField();
+                passConfirm.setPromptText("confirm password...");
+                form.add(passConfirm, 1, 4);
+
+                Label notMatchingPass = new Label("*password and confirmation don't match");
+                form.add(notMatchingPass, 1, 5, 2, 1);
+                alerts.add(notMatchingPass);
+
+                passConfirm.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        notMatchingPass.setVisible(!newValue.equals(passwordField.getText()));
+                    }
+                });
+
+                Text fName = new Text("first name : ");
+                form.add(fName, 0, 6);
+
+                TextField fNameField = new TextField();
+                fNameField.setPromptText("first name...");
+                form.add(fNameField, 1, 6);
+
+                Text lName = new Text("last name : ");
+                form.add(lName, 0, 8);
+
+                TextField lNameField = new TextField();
+                lNameField.setPromptText("last name...");
+                form.add(lNameField, 1, 8);
+
+                Text email = new Text("Email : ");
+                form.add(email, 0, 10);
+
+                TextField emailField = new TextField();
+                emailField.setPromptText("Email...");
+                form.add(emailField, 1, 10);
+
+                Label invalidEmail = new Label("*please enter a valid email");
+                form.add(invalidEmail, 1, 11, 2, 1);
+                alerts.add(invalidEmail);
+
+                emailField.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        invalidEmail.setVisible(!newValue.matches("\\w+@\\w+\\.\\w+"));
+                    }
+                });
+
+                Text phone = new Text("phone number : ");
+                form.add(phone, 0, 12);
+
+                TextField phoneField = new TextField();
+                phoneField.setPromptText("phone number...");
+                form.add(phoneField, 1, 12);
+
+                Label invalidPhone = new Label("*please enter a valid phone number");
+                form.add(invalidPhone, 1, 13, 2, 1);
+                alerts.add(invalidPhone);
+
+                phoneField.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        if (!newValue.matches("\\+?\\d*"))
+                            phoneField.setText(oldValue);
+                        invalidPhone.setVisible(!newValue.matches("(\\+98|0)9\\d{9}"));
+                    }
+                });
+
+                Button getImage = new Button("upload profile picture");
+                form.add(getImage, 0, 14);
+
+                FileChooser imageChooser = new FileChooser();
+
+                getImage.setOnAction(event -> setFile(imageChooser.showOpenDialog(App.getMainStage())));
+
+                Label emptyField = new Label("*please make sure no field is left empty");
+                emptyField.setVisible(false);
+                form.add(emptyField, 1, 21, 2, 1);
+
+                for (Label label : alerts) {
+                    label.setVisible(false);
+                }
+
+                Button submit = new Button("submit");
+                form.add(submit, 1, 20);
+                submit.setOnAction(event -> {
+                    emptyField.setVisible(false);
+                    if ((((usernameField.getText().isEmpty() || passwordField.getText().isEmpty()) || passConfirm.getText().isEmpty()) || fNameField.getText().isEmpty())
+                            || lNameField.getText().isEmpty() || emailField.getText().isEmpty() || phoneField.getText().isEmpty() || file == null) {
+                        emptyField.setVisible(true);
+                        return;
+                    } else {
+                        for (Label alert : alerts) {
+                            if (alert.isVisible())
+                                return;
+                        }
+                    }
+                    new Manager(usernameField.getText(), fNameField.getText(), lNameField.getText(), emailField.getText(), phoneField.getText(),
+                            passwordField.getText(), file.toURI().toString());
+                    new Alert(Alert.AlertType.INFORMATION,"manager successfully added");
+                    App.getMainStage().setScene(manageUsers());
+                });
+
+                Button back = new Button("return");
+                form.add(back, 1, 22);
+                back.setOnAction(event -> App.getMainStage().setScene(manageUsers()));
             }
         };
     }
@@ -369,7 +552,6 @@ public class ManagerPanel extends Menu {
                 AnchorPane.setLeftAnchor(categories, 300.0);
 
                 TreeTableView<Category> categoryTree = new TreeTableView<>();
-                categoryTree.setEditable(true);
                 categories.getChildren().add(categoryTree);
 
                 setTreeTableItems(categoryTree);
@@ -391,7 +573,7 @@ public class ManagerPanel extends Menu {
                     if (categoryTree.getSelectionModel().getSelectedItem() != null)
                         deleteCategory(categoryTree.getSelectionModel().getSelectedItem().getValue());
                     else
-                        new Alert(Alert.AlertType.ERROR,"no category is selected");
+                        new Alert(Alert.AlertType.ERROR, "no category is selected");
                 });
 
                 Button add = new Button("add");
@@ -403,7 +585,7 @@ public class ManagerPanel extends Menu {
 
                 buttons.getChildren().addAll(back, delete, add, edit);
 
-                pane.getChildren().addAll(categories, buttons);
+                pane.getChildren().addAll(new HBox(buttons,categoryTree));
 
 
             }
@@ -500,7 +682,7 @@ public class ManagerPanel extends Menu {
                 grid.add(blankField, 1, 6);
                 add.setOnAction(event -> {
                     blankField.setVisible(false);
-                    if (nameField.getText().isEmpty() || Category.getCategoryByName(nameField.getText())!=null)
+                    if (nameField.getText().isEmpty() || Category.getCategoryByName(nameField.getText()) != null)
                         blankField.setVisible(true);
                     else if (parentChoice.getSelectionModel().isEmpty())
                         blankField.setVisible(true);
@@ -516,7 +698,7 @@ public class ManagerPanel extends Menu {
 
                         category.setSpecialAttributes(specialAttribute);
 
-                        new Alert(Alert.AlertType.INFORMATION,"category successfully edited");
+                        new Alert(Alert.AlertType.INFORMATION, "category successfully edited");
                         App.getMainStage().setScene(manageCategories());
                     }
                 });
@@ -532,6 +714,8 @@ public class ManagerPanel extends Menu {
             @Override
             public void init() {
                 GridPane grid = new GridPane();
+                grid.setHgap(40);
+                grid.setVgap(40);
 
 
                 Text name = new Text("name:");
@@ -582,7 +766,7 @@ public class ManagerPanel extends Menu {
                 grid.add(blankField, 1, 6);
                 add.setOnAction(event -> {
                     blankField.setVisible(false);
-                    if (nameField.getText().isEmpty() || Category.getCategoryByName(nameField.getText())!=null)
+                    if (nameField.getText().isEmpty() || Category.getCategoryByName(nameField.getText()) != null)
                         blankField.setVisible(true);
                     else if (parentChoice.getSelectionModel().isEmpty())
                         blankField.setVisible(true);
@@ -590,7 +774,7 @@ public class ManagerPanel extends Menu {
                         blankField.setVisible(true);
                     else {
                         addCategory(nameField.getText(), Category.getCategoryByName(parentChoice.getSelectionModel().getSelectedItem().toString()), attributeBox);
-                        new Alert(Alert.AlertType.INFORMATION,"category successfully added");
+                        new Alert(Alert.AlertType.INFORMATION, "category successfully added");
                         App.getMainStage().setScene(manageCategories());
                     }
                 });
@@ -762,7 +946,7 @@ public class ManagerPanel extends Menu {
                         new OffWithCode(codeValue.getText(), startDatePick.getValue().atStartOfDay(), endDatePick.getValue().atStartOfDay(),
                                 Integer.parseInt(percentField.getText()), Float.parseFloat(maxField.getText()), Integer.parseInt(usageField.getText()), buyers);
 
-                        new Alert(Alert.AlertType.INFORMATION,"discount successfully added");
+                        new Alert(Alert.AlertType.INFORMATION, "discount successfully added");
                         App.getMainStage().setScene(new ManagerPanel(new ScrollPane()));
                     }
                 });
@@ -980,14 +1164,14 @@ public class ManagerPanel extends Menu {
                         discount.setStartDate(startDatePick.getValue().atStartOfDay());
                         discount.setStopDate(endDatePick.getValue().atStartOfDay());
 
-                        ArrayList<Buyer> chosenBuyers=new ArrayList<>();
+                        ArrayList<Buyer> chosenBuyers = new ArrayList<>();
 
-                        for(Node choice:userChoices.getChildren()){
-                            chosenBuyers.add(((ChoiceBox<Buyer>)choice).getSelectionModel().getSelectedItem());
+                        for (Node choice : userChoices.getChildren()) {
+                            chosenBuyers.add(((ChoiceBox<Buyer>) choice).getSelectionModel().getSelectedItem());
                         }
                         discount.setApplyingAccounts(chosenBuyers);
 
-                        new Alert(Alert.AlertType.INFORMATION,"discount successfully edited");
+                        new Alert(Alert.AlertType.INFORMATION, "discount successfully edited");
                         App.getMainStage().setScene(manageDiscounts());
                     }
                 });
@@ -1022,18 +1206,21 @@ public class ManagerPanel extends Menu {
                 TableColumn<Request, String> dateColumn = new TableColumn<>("send time");
                 dateColumn.setCellValueFactory(new PropertyValueFactory<>("dateTime"));
 
-                requestTable.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        App.getMainStage().setScene(new RequestPanel(new ScrollPane(), requestTable.getSelectionModel().getSelectedItem()));
-                    }
-                });
-
                 requestTable.getColumns().addAll(typeColumn, dateColumn);
 
                 Button back = new Button("return");
                 back.setOnAction(event -> App.getMainStage().setScene(new ManagerPanel(new ScrollPane())));
-                pane.getChildren().add(back);
+
+                Button view=new Button("view");
+                view.setOnAction(event -> {
+                    if(requestTable.getSelectionModel().getSelectedItem()!=null){
+                        App.getMainStage().setScene(new RequestPanel(new ScrollPane(),requestTable.getSelectionModel().getSelectedItem()).productAddition());
+                    }else {
+                        new Alert(Alert.AlertType.ERROR,"no request chosen").show();
+                    }
+                });
+
+                pane.getChildren().add(new VBox(back,view));
 
             }
         };

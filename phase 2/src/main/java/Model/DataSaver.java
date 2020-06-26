@@ -31,9 +31,6 @@ public class DataSaver {
         FileWriter managerWriter = new FileWriter("managers.json");
         FileWriter mainManager = new FileWriter("mainManager.json");
 
-        for (int i=0;i<=0;i++){
-            mainManager.write(gson.toJson(Manager.getMainManager()));
-        }
 
         for (Buyer buyer:Buyer.getAllBuyers())
             buyerWriter.write(gson.toJson(buyer));
@@ -44,7 +41,7 @@ public class DataSaver {
         for (Manager manager: Manager.getSubManagers())
             managerWriter.write(gson.toJson(manager));
 
-
+        mainManager.write(gson.toJson(Manager.getMainManager()));
 
         buyerWriter.close();
         sellerWriter.close();

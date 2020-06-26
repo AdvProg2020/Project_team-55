@@ -29,7 +29,7 @@ public class DataLoader {
             loader.readScore();
             App.getMainStage().setScene(new MainPage(new ScrollPane()));
         }else {
-            App.getMainStage().setScene(new RegisterMenu(new ScrollPane()).submitManager());
+            App.getMainStage().setScene(new RegisterMenu(new ScrollPane(),null).submitManager());
            // App.getMainStage().setScene(new BuyerPanel(new ScrollPane()));
         }
     }
@@ -54,8 +54,9 @@ public class DataLoader {
             Manager.getSubManagers().add(manager);
             User.getUsers().add(manager);
         }
+
         Manager.setMainManager(gson.fromJson(mainManager,Manager.class));
-        User.getUsers().add(gson.fromJson(mainManager,Manager.class));
+        User.getUsers().add(Manager.getMainManager());
 
         buyerReader.close();
         sellerReader.close();
@@ -86,6 +87,7 @@ public class DataLoader {
         Off off;
         while ((off=gson.fromJson(offReader,Off.class))!=null){
             Off.getOffArray().add(off);
+            off.startCountdown();
         }
         offReader.close();
     }
@@ -95,6 +97,7 @@ public class DataLoader {
         OffWithCode discount;
         while ((discount=gson.fromJson(discountReader,OffWithCode.class))!=null){
             OffWithCode.getAllDiscounts().add(discount);
+            discount.startCountdown();
         }
         discountReader.close();
     }

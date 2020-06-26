@@ -3,7 +3,6 @@ package org.menu;
 import Model.Category;
 import Model.Off;
 import Model.Product;
-import Model.Score;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -13,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -21,6 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.example.App;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class OffMenu extends Menu {
@@ -41,10 +42,11 @@ public class OffMenu extends Menu {
     @Override
     public void init() {
         pagination = new Pagination();
-        productTableView=new TableView<>();
-        filteredProducts=new ArrayList<>();
+        productTableView = new TableView<>();
+        filteredProducts = new ArrayList<>();
 
-        for (Off off:Off.getOffArray()){
+        for (Off off : Off.getOffArray()) {
+            if (off.isActive())
             filteredProducts.addAll(off.getProductsArray());
         }
 
@@ -53,6 +55,9 @@ public class OffMenu extends Menu {
         pagination.setMaxPageIndicatorCount(7);
 
         productTableView = new TableView<>();
+
+        TableColumn<Product, ImageView> imageColumn=new TableColumn<>("picture");
+        imageColumn.setCellValueFactory(new PropertyValueFactory<>("picture"));
 
         TableColumn<Product, String> nameColumn = new TableColumn<>("name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -71,24 +76,24 @@ public class OffMenu extends Menu {
 
         TableColumn<Product, String> timeColumn = new TableColumn<>("remained time");
 
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
-                Scene scene=App.getMainStage().getScene();
-                long lastUpdate=0;
+                Scene scene = App.getMainStage().getScene();
+                long lastUpdate = 0;
                 long now;
 
-                while (App.getMainStage().getScene().equals(scene)){
-                    now=System.currentTimeMillis();
-                    if (now-lastUpdate>=500){
-                        lastUpdate=now;
+                while (App.getMainStage().getScene().equals(scene)) {
+                    now = System.currentTimeMillis();
+                    if (now - lastUpdate >= 500) {
+                        lastUpdate = now;
                         timeColumn.setCellValueFactory(new PropertyValueFactory<>("remainedTime"));
                     }
                 }
             }
         }.start();
 
-        productTableView.getColumns().addAll(nameColumn, priceColumn, priceWithOffColumn, percentColumn, scoreColumn, timeColumn);
+        productTableView.getColumns().addAll(imageColumn,nameColumn, priceColumn, priceWithOffColumn, percentColumn, scoreColumn, timeColumn);
 
         productTableView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
@@ -110,13 +115,17 @@ public class OffMenu extends Menu {
     public Node createPage(int pageIndex) {
         int fromIndex = pageIndex * itemsPerPage;
         int toIndex = Math.min(fromIndex + itemsPerPage, dataSize);
-        productTableView.setItems((ObservableList<Product>) filteredProducts.subList(fromIndex, toIndex));
+        productTableView.setItems(FXCollections.observableList(filteredProducts.subList(fromIndex, toIndex)));
         return productTableView;
     }
 
+
     private void initFilters() {
         TreeView<Category> categoryTree = new TreeView<>();
-        categoryTree.setRoot(null);
+
+        Category nullCategory=new Category("category",null,new ArrayList<String>());
+        Category.getAllCategories().remove(nullCategory);
+        categoryTree.setRoot(new TreeItem<Category>(nullCategory));
         categoryTree.setShowRoot(false);
 
         for (Category category : Category.getAllCategories()) {
@@ -174,10 +183,11 @@ public class OffMenu extends Menu {
         filters.getChildren().add(1, priceLimit);
 
         Button update = new Button("update");
+        filters.getChildren().add(2,update);
 
         update.setOnAction(event -> {
             filteredProducts.clear();
-            for (Off off:Off.getOffArray()){
+            for (Off off : Off.getOffArray()) {
                 filteredProducts.addAll(off.getProductsArray());
             }
 

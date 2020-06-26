@@ -1,5 +1,6 @@
 package org.menu;
 
+import Model.Buyer;
 import Model.Category;
 import Model.Product;
 import javafx.beans.value.ChangeListener;
@@ -10,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -17,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.example.App;
+import sun.dc.pr.PRError;
 
 import java.util.ArrayList;
 
@@ -41,13 +44,16 @@ public class ProductMenu extends Menu {
         productTableView=new TableView<>();
         filteredProducts=new ArrayList<>();
 
-        filteredProducts=Product.getAllProducts();
+        filteredProducts.addAll(Product.getAllProducts());
 
         setItems();
 
         pagination.setMaxPageIndicatorCount(7);
 
         productTableView = new TableView<>();
+
+        TableColumn<Product, ImageView> imageColumn=new TableColumn<>("picture");
+        imageColumn.setCellValueFactory(new PropertyValueFactory<>("picture"));
 
         TableColumn<Product, String> nameColumn = new TableColumn<>("name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -58,14 +64,8 @@ public class ProductMenu extends Menu {
         TableColumn<Product, Float> scoreColumn = new TableColumn<>("score");
         scoreColumn.setCellValueFactory(new PropertyValueFactory<>("averageScore"));
 
-        productTableView.getColumns().addAll(nameColumn, priceColumn, scoreColumn);
+        productTableView.getColumns().addAll(imageColumn,nameColumn, priceColumn, scoreColumn);
 
-        productTableView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                App.getMainStage().setScene(new UniqueProductMenu(new ScrollPane(), productTableView.getSelectionModel().getSelectedItem(), App.getMainStage().getScene()));
-            }
-        });
 
         pagination.setPageFactory(this::createPage);
 
@@ -80,13 +80,17 @@ public class ProductMenu extends Menu {
     public Node createPage(int pageIndex) {
         int fromIndex = pageIndex * itemsPerPage;
         int toIndex = Math.min(fromIndex + itemsPerPage, dataSize);
-        productTableView.setItems((ObservableList<Product>) filteredProducts.subList(fromIndex, toIndex));
+
+        productTableView.setItems(FXCollections.observableList(filteredProducts.subList(fromIndex, toIndex)));
         return productTableView;
     }
 
     private void initFilters(){
         TreeView<Category> categoryTree=new TreeView<>();
-        categoryTree.setRoot(null);
+
+        Category nullCategory=new Category("category",null,new ArrayList<String>());
+        Category.getAllCategories().remove(nullCategory);
+        categoryTree.setRoot(new TreeItem<Category>(nullCategory));
         categoryTree.setShowRoot(false);
 
         for (Category category:Category.getAllCategories()){
@@ -145,9 +149,11 @@ public class ProductMenu extends Menu {
 
         Button update=new Button("update");
 
+        filters.getChildren().add(2,update);
+
         update.setOnAction(event -> {
             filteredProducts.clear();
-            filteredProducts=Product.getAllProducts();
+            filteredProducts.addAll(Product.getAllProducts());
             if (!filters.getChildren().contains(categoryTree)){
 
                 filteredProducts.removeIf(searching -> searching.getCategory()!=selectedCategory);
@@ -172,6 +178,14 @@ public class ProductMenu extends Menu {
 
             productTableView.setItems(FXCollections.observableArrayList(filteredProducts));
             setItems();
+        });
+
+        Button view=new Button("view");
+        filters.getChildren().add(3,view);
+        view.setOnAction(event -> {
+            if (productTableView.getSelectionModel().getSelectedItem()!=null){
+                App.getMainStage().setScene(new UniqueProductMenu(new ScrollPane(),productTableView.getSelectionModel().getSelectedItem(),App.getMainStage().getScene()));
+            }
         });
 
     }

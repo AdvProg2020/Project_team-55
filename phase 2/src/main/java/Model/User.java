@@ -19,10 +19,9 @@ public abstract class User implements Serializable {
     protected String phoneNumber;
     protected String password;
     protected float credit;
-    protected CheckBox select;
-    protected Image profile;
+    protected String profile;
 
-    public User(String userName, String firstName, String lastName, String email, String phoneNumber, String password,Image profile){
+    public User(String userName, String firstName, String lastName, String email, String phoneNumber, String password,String profile){
         this.username=userName;
         this.firstName=firstName;
         this.lastName=lastName;
@@ -30,7 +29,6 @@ public abstract class User implements Serializable {
         this.phoneNumber=phoneNumber;
         this.password=password;
         this.profile=profile;
-        select=new CheckBox();
         users.add(this);
     }
 
@@ -103,20 +101,16 @@ public abstract class User implements Serializable {
         return credit;
     }
 
-    public CheckBox getSelect() {
-        return select;
-    }
-
     public Image getProfile() {
-        return profile;
+        return new Image(profile);
     }
 
-    public void setProfile(Image profile) {
+    public void setProfile(String profile) {
         this.profile = profile;
     }
 
-    public void setSelect(CheckBox select) {
-        this.select = select;
+    public String getRole(){
+        return getClass().getSimpleName();
     }
 
     public static User getActiveUser() {

@@ -13,6 +13,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import org.example.App;
 import sun.swing.BakedArrayList;
 
@@ -23,40 +26,42 @@ public class MainPage extends Menu{
 
     @Override
     public void init() {
-        App.getMainStage().getScene().getStylesheets().add("userpanel.css");
         VBox navbar=new VBox();
         pane.getChildren().add(navbar);
-        pane.getStyleClass().add("pane");
 
         AnchorPane.setTopAnchor(navbar,200.0);
         AnchorPane.setLeftAnchor(navbar,200.0);
 
 
         Button login=new Button("login");
+        login.setFont(Font.font("CHILLER", FontWeight.NORMAL, FontPosture.REGULAR,22));
         login.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                App.getMainStage().setScene(new LoginPanel(new ScrollPane(),App.getMainStage().getScene()));
+                App.getMainStage().setScene(new LoginPanel(new ScrollPane(),(Menu)App.getMainStage().getScene()));
             }
         });
 
         Button register=new Button("register");
+        register.setFont(Font.font("CHILLER",FontWeight.NORMAL,FontPosture.REGULAR,22));
         register.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                RegisterMenu registerMenu=new RegisterMenu(new ScrollPane());
-                registerMenu.setPreviousScene(App.getMainStage().getScene());
+                RegisterMenu registerMenu=new RegisterMenu(new ScrollPane(), (Menu) App.getMainStage().getScene());
                 App.getMainStage().setScene(registerMenu);
             }
         });
 
         Button products=new Button("products");
+        products.setFont(Font.font("CHILLER",FontWeight.NORMAL,FontPosture.REGULAR,22));
         products.setOnAction(event -> App.getMainStage().setScene(new ProductMenu(new ScrollPane())));
 
         Button offs=new Button("offs");
+        offs.setFont(Font.font("CHILLER",FontWeight.NORMAL,FontPosture.REGULAR,22));
         offs.setOnAction(event -> App.getMainStage().setScene(new OffMenu(new ScrollPane())));
 
         Button panel=new Button("userPanel");
+        panel.setFont(Font.font("CHILLER",FontWeight.NORMAL,FontPosture.REGULAR,22));
         panel.setOnAction(event -> {
             if (User.getActiveUser() instanceof Buyer){
                 App.getMainStage().setScene(new BuyerPanel(new ScrollPane()));

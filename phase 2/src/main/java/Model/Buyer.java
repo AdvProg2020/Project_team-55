@@ -10,9 +10,10 @@ public class Buyer extends User {
     private ArrayList<BuyLog> orderHistory = new ArrayList<BuyLog>();
     private static final LinkedList<Buyer> allBuyers = new LinkedList<>();
 
-    public Buyer(String userName, String firstName, String lastName, String email, String phoneNumber, String password, float credit, Image profile) {
+    public Buyer(String userName, String firstName, String lastName, String email, String phoneNumber, String password, float credit, String profile) {
         super(userName, firstName, lastName, email, phoneNumber, password,profile);
         this.credit = credit;
+        this.cart=new Cart(this);
         allBuyers.add(this);
     }
 

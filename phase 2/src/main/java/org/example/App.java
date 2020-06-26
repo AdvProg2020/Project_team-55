@@ -1,7 +1,9 @@
 package org.example;
 
 import Model.DataLoader;
+import Model.DataSaver;
 import Model.ExitThread;
+import Model.Manager;
 import com.google.gson.internal.$Gson$Preconditions;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -37,13 +39,13 @@ public class App extends Application {
         mainStage.setMinHeight(500);
         mainStage.setMinWidth(500);
 
-        String path = "C:\\Users\\ASUS\\Downloads\\Telegram Desktop\\The Korgis – Everybody's Got To Learn Sometimes.mp3";
+        String path = "E:\\java projects\\graphic phase\\src\\main\\resources\\Pachelbel - Canon in D (Best Piano Version).mp3";
         Media media = new Media(new File(path).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setAutoPlay(true);
 
-//        Runtime runtime=Runtime.getRuntime();
-//        runtime.addShutdownHook(new ExitThread());
+        Runtime runtime=Runtime.getRuntime();
+        runtime.addShutdownHook(new ExitThread());
 
         mainStage.setOnCloseRequest(event -> {
             event.consume();
@@ -74,6 +76,13 @@ public class App extends Application {
 
         if (result.get()==ButtonType.OK){
             mainStage.close();
+//            try {
+//                if (Manager.getMainManager() != null) {
+//                    DataSaver.saveData();
+//                }
+//            }catch (IOException e){
+//                e.printStackTrace();
+//            }
         }
     }
 }
