@@ -1,6 +1,7 @@
 package Model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -27,6 +28,20 @@ public class OffWithCode {
             this.applyingAccounts.put(buyer, numberOfUsesOfCode);
         }
         allDiscounts.add(this);
+
+        OffWithCode discount=this;
+
+        new Thread(){
+            @Override
+            public void run() {
+                while (true){
+                    if (LocalDateTime.now().isBefore(stopDate)){
+                        allDiscounts.remove(discount);
+                        break;
+                    }
+                }
+            }
+        }.start();
     }
 
 
@@ -74,6 +89,14 @@ public class OffWithCode {
         return stopDate;
     }
 
+    public String getFormattedStartDate(){
+        return startDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    }
+
+    public String getFormattedStopDate(){
+        return stopDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    }
+
     public int getOffAmount() {
         return offAmount;
     }
@@ -88,6 +111,21 @@ public class OffWithCode {
 
     public int getNumberOfUsesOfCode() {
         return numberOfUsesOfCode;
+    }
+
+
+    public int getRemainedUsages(){
+        return applyingAccounts.get(User.getActiveUser());
+    }
+
+    public void setApplyingAccounts(ArrayList<Buyer> applyingAccounts) {
+        HashMap<Buyer,Integer> buyers=new HashMap<>();
+
+        for (Buyer buyer:applyingAccounts){
+            buyers.put(buyer,numberOfUsesOfCode);
+        }
+
+        this.applyingAccounts=buyers;
     }
 
     public boolean isActive() {
@@ -118,11 +156,12 @@ public class OffWithCode {
     }
 
     public void setNumberOfUsesOfCode(int numberOfUsesOfCode) {
-        this.numberOfUsesOfCode = numberOfUsesOfCode;
         for (Buyer buyer:applyingAccounts.keySet()){
-            int remain=applyingAccounts.get(buyer)+numberOfUsesOfCode;
+            int remain=applyingAccounts.get(buyer)+(numberOfUsesOfCode-this.numberOfUsesOfCode);
             applyingAccounts.put(buyer,remain);
         }
+
+        this.numberOfUsesOfCode = numberOfUsesOfCode;
     }
 
     public void useByUser(Buyer buyer){

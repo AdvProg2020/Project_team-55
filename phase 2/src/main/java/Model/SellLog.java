@@ -55,6 +55,34 @@ public class SellLog {
         return null;
     }
 
+    public String getLogId() {
+        return logId;
+    }
+
+    public String getDate() {
+        return date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+    }
+
+    public Product getBoughtProduct() {
+        return boughtProduct;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public float getPurchasedMoney() {
+        return purchasedMoney;
+    }
+
+    public int getOffPercent() {
+        return offPercent;
+    }
+
+    public Buyer getBuyer() {
+        return buyer;
+    }
+
     @Override
     public String toString() {
         return logId+ " product "+boughtProduct.getProductId()+" by quantity "+number+

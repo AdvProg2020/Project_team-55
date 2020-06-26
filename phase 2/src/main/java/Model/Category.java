@@ -10,8 +10,8 @@ public class Category {
     Category parentCategory;
     private String name;
     private ArrayList<Category> subCategories;
-    private final ArrayList<Product> arrayProduct = new ArrayList<>();
-    private final ArrayList<String> specialAttributes = new ArrayList<>();
+    private ArrayList<Product> arrayProduct = new ArrayList<>();
+    private ArrayList<String> specialAttributes = new ArrayList<>();
 
     public Category(String name, Category parentCategory, ArrayList specialAttributes) {
         this.name = name;
@@ -71,6 +71,10 @@ public class Category {
         this.name = name;
     }
 
+    public void setSpecialAttributes(ArrayList<String> specialAttributes){
+        this.specialAttributes=specialAttributes;
+    }
+
     public Category getParentCategory() {
         return parentCategory;
     }
@@ -95,6 +99,11 @@ public class Category {
         for (Product product : arrayProduct) {
             product.getSpecialAttributes().put(attribute, "");
         }
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }
 

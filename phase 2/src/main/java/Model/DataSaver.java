@@ -2,9 +2,11 @@ package Model;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.omg.CORBA.MARSHAL;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 
 public class DataSaver {
     private GsonBuilder builder = new GsonBuilder();
@@ -28,15 +30,21 @@ public class DataSaver {
         FileWriter sellerWriter = new FileWriter("sellers.json");
         FileWriter managerWriter = new FileWriter("managers.json");
         FileWriter mainManager = new FileWriter("mainManager.json");
-        for (User user : User.getUsers()) {
-            if (user instanceof Buyer)
-                buyerWriter.write(gson.toJson(user));
-            else if (user instanceof Seller)
-                sellerWriter.write(gson.toJson(user));
-            else if (user instanceof Manager)
-                managerWriter.write(gson.toJson(user));
+
+        for (int i=0;i<=0;i++){
+            mainManager.write(gson.toJson(Manager.getMainManager()));
         }
-        mainManager.write(gson.toJson(Manager.getMainManager()));
+
+        for (Buyer buyer:Buyer.getAllBuyers())
+            buyerWriter.write(gson.toJson(buyer));
+
+        for (Seller seller:Seller.getAllSellers())
+            sellerWriter.write(gson.toJson(seller));
+
+        for (Manager manager: Manager.getSubManagers())
+            managerWriter.write(gson.toJson(manager));
+
+
 
         buyerWriter.close();
         sellerWriter.close();
@@ -78,7 +86,6 @@ public class DataSaver {
     public void saveRequests() throws IOException{
         FileWriter productAddWriter=new FileWriter("productAdditionRequests.json");
         FileWriter productEditWriter=new FileWriter("productEditRequests.json");
-        FileWriter productRemoveWriter=new FileWriter("productRemovalRequests.json");
         FileWriter offAddWriter=new FileWriter("offAdditionRequests.json");
         FileWriter offEditWriter=new FileWriter("offEditRequests.json");
         for (Request request:Request.getAllRequests()){
@@ -86,8 +93,6 @@ public class DataSaver {
                 productAddWriter.write(gson.toJson(request));
             }else if (request instanceof ProductEditRequest){
                 productEditWriter.write(gson.toJson(request));
-            }else if (request instanceof ProductRemovalRequest){
-                productRemoveWriter.write(gson.toJson(request));
             }else if (request instanceof OffAdditionRequest){
                 offAddWriter.write(gson.toJson(request));
             }else if (request instanceof OffEditRequest){
@@ -96,7 +101,6 @@ public class DataSaver {
         }
         productAddWriter.close();
         productEditWriter.close();
-        productRemoveWriter.close();
         offAddWriter.close();
         offEditWriter.close();
     }

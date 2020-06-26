@@ -5,28 +5,34 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.SubScene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import org.example.App;
 
+import java.io.File;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class ManagerPanel extends Menu {
 
     SubScene discountSub, userSub;
+    private File file;
 
     public ManagerPanel(ScrollPane root) {
         super(root);
@@ -44,6 +50,12 @@ public class ManagerPanel extends Menu {
         commands.setLayoutY(300);
 
         AnchorPane.setBottomAnchor(commands, 0.0);
+
+        ImageView profile=new ImageView(User.getActiveUser().getProfile());
+
+        Button edit = new Button("edit profile");
+        edit.getStyleClass().add("command");
+        edit.setOnAction(event -> App.getMainStage().setScene(editProfile()));
 
         Button manageUsers = new Button("manage users");
         manageUsers.setPrefSize(200, 50);
@@ -77,16 +89,10 @@ public class ManagerPanel extends Menu {
         manageRequests.setPrefSize(200, 50);
         manageRequests.getStyleClass().add("command");
 
-        commands.getChildren().addAll(manageUsers, manageCategories, manageProducts,
+        commands.getChildren().addAll(profile,edit, manageUsers, manageCategories, manageProducts,
                 createDiscount, viewDiscounts, manageRequests);
 
         pane.getChildren().add(commands);
-
-        ImageView profile = new ImageView();
-        profile.setLayoutX(0);
-        profile.setLayoutY(0);
-
-        pane.getChildren().add(profile);
     }
 
     public void getInfoGrid() {
@@ -102,8 +108,7 @@ public class ManagerPanel extends Menu {
         firstName.getStyleClass().add("info-grid");
         info.add(firstName, 0, 0);
 
-        Text firstNameValue = new Text("logged in firstName");
-        //todo: get login panel
+        Text firstNameValue = new Text(User.getActiveUser().getFirstName());
         firstNameValue.getStyleClass().add("info-grid");
         info.add(firstNameValue, 1, 0);
 
@@ -111,7 +116,7 @@ public class ManagerPanel extends Menu {
         lastName.getStyleClass().add("info-grid");
         info.add(lastName, 0, 1);
 
-        Text lastNameValue = new Text("logged in last name");
+        Text lastNameValue = new Text(User.getActiveUser().getLastName());
         lastNameValue.getStyleClass().add("info-grid");
         info.add(lastNameValue, 1, 1);
 
@@ -119,7 +124,7 @@ public class ManagerPanel extends Menu {
         phone.getStyleClass().add("info-grid");
         info.add(phone, 0, 2);
 
-        Text phoneValue = new Text("logged in phone number");
+        Text phoneValue = new Text(User.getActiveUser().getPhoneNumber());
         phoneValue.getStyleClass().add("info-grid");
         info.add(phoneValue, 1, 2);
 
@@ -127,7 +132,7 @@ public class ManagerPanel extends Menu {
         email.getStyleClass().add("info-grid");
         info.add(email, 0, 3);
 
-        Text emailValue = new Text("logged in email");
+        Text emailValue = new Text(User.getActiveUser().getEmail());
         emailValue.getStyleClass().add("info-grid");
         info.add(emailValue, 1, 3);
 
@@ -140,6 +145,167 @@ public class ManagerPanel extends Menu {
         pane.getChildren().add(info);
     }
 
+    public Menu editProfile() {
+        return new Menu(new ScrollPane()) {
+            @Override
+            public void init() {
+                GridPane form = new GridPane();
+                pane.getChildren().add(form);
+                form.setVgap(25);
+                form.setHgap(100);
+
+                AnchorPane.setLeftAnchor(form, 300.0);
+                AnchorPane.setTopAnchor(form, 100.0);
+                AnchorPane.setBottomAnchor(form, 100.0);
+
+                ArrayList<Label> alerts = new ArrayList<>();
+
+
+                Text password = new Text("password : ");
+                form.add(password, 0, 2);
+
+                PasswordField passwordField = new PasswordField();
+                passwordField.setPromptText("enter password...");
+                passwordField.setText(User.getActiveUser().getPassword());
+                form.add(passwordField, 1, 2);
+
+                Label invalidPass = new Label("*password can only contain a-z A-Z _ 0-9");
+                form.add(invalidPass, 1, 3, 2, 1);
+                alerts.add(invalidPass);
+
+                passwordField.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        invalidPass.setVisible(!newValue.matches("\\w+"));
+                    }
+                });
+
+                Text confirm = new Text("confirm password : ");
+                form.add(confirm, 0, 4);
+
+                PasswordField passConfirm = new PasswordField();
+                passConfirm.setPromptText("confirm password...");
+                passConfirm.setText(User.getActiveUser().getPassword());
+                form.add(passConfirm, 1, 4);
+
+                Label notMatchingPass = new Label("*password and confirmation don't match");
+                form.add(notMatchingPass, 1, 5, 2, 1);
+                alerts.add(notMatchingPass);
+
+                passConfirm.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        notMatchingPass.setVisible(!newValue.equals(passwordField.getText()));
+                    }
+                });
+
+                Text fName = new Text("first name : ");
+                form.add(fName, 0, 6);
+
+                TextField fNameField = new TextField();
+                fNameField.setPromptText("first name...");
+                fNameField.setText(User.getActiveUser().getFirstName());
+                form.add(fNameField, 1, 6);
+
+                Text lName = new Text("last name : ");
+                form.add(lName, 0, 8);
+
+                TextField lNameField = new TextField();
+                lNameField.setPromptText("last name...");
+                lNameField.setText(User.getActiveUser().getLastName());
+                form.add(lNameField, 1, 8);
+
+                Text email = new Text("Email : ");
+                form.add(email, 0, 10);
+
+                TextField emailField = new TextField();
+                emailField.setPromptText("Email...");
+                emailField.setText(User.getActiveUser().getEmail());
+                form.add(emailField, 1, 10);
+
+                Label invalidEmail = new Label("*please enter a valid email");
+                form.add(invalidEmail, 1, 11, 2, 1);
+                alerts.add(invalidEmail);
+
+                emailField.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        invalidEmail.setVisible(!newValue.matches("\\w+@\\w+\\.\\w+"));
+                    }
+                });
+
+                Text phone = new Text("phone number : ");
+                form.add(phone, 0, 12);
+
+                TextField phoneField = new TextField();
+                phoneField.setPromptText("phone number...");
+                phoneField.setText(User.getActiveUser().getPhoneNumber());
+                form.add(phoneField, 1, 12);
+
+                Label invalidPhone = new Label("*please enter a valid phone number");
+                form.add(invalidPhone, 1, 13, 2, 1);
+                alerts.add(invalidPhone);
+
+                phoneField.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        if (!newValue.matches("\\+?\\d*"))
+                            phoneField.setText(oldValue);
+                        invalidPhone.setVisible(!newValue.matches("(\\+98|0)9\\d{9}"));
+                    }
+                });
+
+
+                Button getImage = new Button("upload profile picture");
+                form.add(getImage, 0, 16);
+
+                FileChooser imageChooser = new FileChooser();
+                File file = null;
+
+                getImage.setOnAction(event -> setFile(imageChooser.showOpenDialog(App.getMainStage())));
+
+
+                alerts.forEach((alert) -> alert.setVisible(false));
+
+                Label emptyField = new Label("*please make sure no field is left empty");
+                emptyField.setVisible(false);
+                form.add(emptyField, 1, 21, 2, 1);
+
+                Button submit = new Button("submit");
+                form.add(submit, 1, 20);
+                submit.setOnAction(event -> {
+                    emptyField.setVisible(false);
+                    if ((((passwordField.getText().isEmpty()) || passConfirm.getText().isEmpty()) || fNameField.getText().isEmpty())
+                            || lNameField.getText().isEmpty() || emailField.getText().isEmpty() || phoneField.getText().isEmpty()) {
+                        emptyField.setVisible(true);
+                        return;
+                    } else {
+                        for (Label alert : alerts) {
+                            if (alert.isVisible())
+                                return;
+                        }
+                    }
+                    User.getActiveUser().setPassword(passwordField.getText());
+                    User.getActiveUser().setFirstName(fNameField.getText());
+                    User.getActiveUser().setLastName(lNameField.getText());
+                    User.getActiveUser().setEmail(emailField.getText());
+                    User.getActiveUser().setPhoneNumber(phoneField.getText());
+                    if (file!=null)
+                    User.getActiveUser().setProfile(new Image(file.toURI().toString()));
+                    new Alert(Alert.AlertType.INFORMATION, "profile successfully edited").show();
+                    App.getMainStage().setScene(new ManagerPanel(new ScrollPane()));
+                });
+
+                Button back = new Button("return");
+                form.add(back, 1, 22);
+                back.setOnAction(event -> App.getMainStage().setScene(new ManagerPanel(new ScrollPane())));
+
+                App.getMainStage().getScene().getStylesheets().add("userpanel.css");
+                pane.getStyleClass().add("pane");
+            }
+        };
+    }
+
 
     public Menu manageUsers() {
         return new Menu(new ScrollPane()) {
@@ -148,7 +314,6 @@ public class ManagerPanel extends Menu {
                 HBox list = new HBox();
 
                 TableView<User> userList = new TableView<>();
-                userList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
                 TableColumn<User, String> name = new TableColumn<>("username");
                 name.setCellValueFactory(new PropertyValueFactory<>("username"));
@@ -169,30 +334,29 @@ public class ManagerPanel extends Menu {
                 pane.getChildren().add(list);
 
                 Button cancel = new Button("return");
-                cancel.setOnAction(event -> App.getMainStage().setScene(new ManagerPanel(new ScrollPane())));
+                cancel.setOnAction(event -> {
+                    App.getMainStage().setScene(new ManagerPanel(new ScrollPane()));
+                });
                 AnchorPane.setBottomAnchor(cancel, 0.0);
                 pane.getChildren().add(cancel);
 
                 Button delete = new Button("delete selected");
-                delete.setOnAction(event -> deleteUsers(users));
+                delete.setOnAction(event -> {
+                    if (userList.getSelectionModel().getSelectedItem() != null) {
+                        User.getUsers().remove(userList.getSelectionModel().getSelectedItem());
+                        new Alert(Alert.AlertType.INFORMATION, "user successfully deleted").show();
+                        userList.setItems(FXCollections.observableArrayList(User.getUsers()));
+                    } else {
+                        new Alert(Alert.AlertType.ERROR, "no user is selected!");
+                    }
+
+                });
 
                 pane.getChildren().add(delete);
 
                 stagePane.setContent(pane);
             }
         };
-    }
-
-
-    public void deleteUsers(ObservableList<User> users) {
-        User selected;
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getSelect().isSelected()) {
-                selected = users.get(i--);
-                users.remove(selected);
-                User.getUsers().remove(selected);
-            }
-        }
     }
 
 
@@ -216,7 +380,6 @@ public class ManagerPanel extends Menu {
                 categoryTree.getColumns().add(name);
 
 
-
                 HBox buttons = new HBox();
                 buttons.setSpacing(10);
 
@@ -224,7 +387,12 @@ public class ManagerPanel extends Menu {
                 back.setOnAction(event -> App.getMainStage().setScene(new ManagerPanel(new ScrollPane())));
 
                 Button delete = new Button("delete");
-                delete.setOnAction(event -> deleteCategory(categoryTree.getSelectionModel().getSelectedItem().getValue()));
+                delete.setOnAction(event -> {
+                    if (categoryTree.getSelectionModel().getSelectedItem() != null)
+                        deleteCategory(categoryTree.getSelectionModel().getSelectedItem().getValue());
+                    else
+                        new Alert(Alert.AlertType.ERROR,"no category is selected");
+                });
 
                 Button add = new Button("add");
                 add.setOnAction(event -> App.getMainStage().setScene(getNewCategory()));
@@ -233,7 +401,7 @@ public class ManagerPanel extends Menu {
                 edit.setOnAction(event ->
                         App.getMainStage().setScene(editCategory(categoryTree.getSelectionModel().getSelectedItem().getValue())));
 
-                buttons.getChildren().addAll(back, delete, add,edit);
+                buttons.getChildren().addAll(back, delete, add, edit);
 
                 pane.getChildren().addAll(categories, buttons);
 
@@ -265,11 +433,12 @@ public class ManagerPanel extends Menu {
 
     public void deleteCategory(Category category) {
 
-            Category.deleteCategory(category);
-            App.getMainStage().setScene(manageCategories());
+        Category.deleteCategory(category);
+        new Alert(Alert.AlertType.INFORMATION, "category successfully deleted");
+        App.getMainStage().setScene(manageCategories());
     }
 
-    public Menu editCategory(Category category){
+    public Menu editCategory(Category category) {
         return new Menu(new ScrollPane()) {
             @Override
             public void init() {
@@ -281,10 +450,6 @@ public class ManagerPanel extends Menu {
 
                 TextField nameField = new TextField();
                 nameField.setText(category.getName());
-                nameField.setOnInputMethodTextChanged(event -> {
-                    if (Category.getCategoryByName(nameField.getText()) != null)
-                        System.out.println("existing category");
-                });
                 grid.add(nameField, 1, 0);
 
                 Text parent = new Text("choose parent category:");
@@ -311,8 +476,8 @@ public class ManagerPanel extends Menu {
                 VBox attributeBox = new VBox();
                 grid.add(attributeBox, 1, 3);
 
-                for (String attribute:category.getSpecialAttributes()){
-                    TextField att=new TextField();
+                for (String attribute : category.getSpecialAttributes()) {
+                    TextField att = new TextField();
                     att.setText(attribute);
                     attributeBox.getChildren().add(att);
                 }
@@ -335,15 +500,23 @@ public class ManagerPanel extends Menu {
                 grid.add(blankField, 1, 6);
                 add.setOnAction(event -> {
                     blankField.setVisible(false);
-                    if (nameField.getText().isEmpty())
+                    if (nameField.getText().isEmpty() || Category.getCategoryByName(nameField.getText())!=null)
                         blankField.setVisible(true);
                     else if (parentChoice.getSelectionModel().isEmpty())
                         blankField.setVisible(true);
                     else if (((TextField) attributeBox.getChildren().get(0)).getText().isEmpty())
                         blankField.setVisible(true);
                     else {
-                        //todo submit changes
+                        category.setName(nameField.getText());
 
+                        ArrayList<String> specialAttribute = new ArrayList<>();
+                        for (int i = 0; i < attributeBox.getChildren().size(); i++) {
+                            specialAttribute.add(((TextField) attributeBox.getChildren().get(i)).getText());
+                        }
+
+                        category.setSpecialAttributes(specialAttribute);
+
+                        new Alert(Alert.AlertType.INFORMATION,"category successfully edited");
                         App.getMainStage().setScene(manageCategories());
                     }
                 });
@@ -365,10 +538,6 @@ public class ManagerPanel extends Menu {
                 grid.add(name, 0, 0);
 
                 TextField nameField = new TextField();
-                nameField.setOnInputMethodTextChanged(event -> {
-                    if (Category.getCategoryByName(nameField.getText()) != null)
-                        System.out.println("existing category");
-                });
                 grid.add(nameField, 1, 0);
 
                 Text parent = new Text("choose parent category:");
@@ -413,7 +582,7 @@ public class ManagerPanel extends Menu {
                 grid.add(blankField, 1, 6);
                 add.setOnAction(event -> {
                     blankField.setVisible(false);
-                    if (nameField.getText().isEmpty())
+                    if (nameField.getText().isEmpty() || Category.getCategoryByName(nameField.getText())!=null)
                         blankField.setVisible(true);
                     else if (parentChoice.getSelectionModel().isEmpty())
                         blankField.setVisible(true);
@@ -421,6 +590,7 @@ public class ManagerPanel extends Menu {
                         blankField.setVisible(true);
                     else {
                         addCategory(nameField.getText(), Category.getCategoryByName(parentChoice.getSelectionModel().getSelectedItem().toString()), attributeBox);
+                        new Alert(Alert.AlertType.INFORMATION,"category successfully added");
                         App.getMainStage().setScene(manageCategories());
                     }
                 });
@@ -456,7 +626,7 @@ public class ManagerPanel extends Menu {
                 AnchorPane.setTopAnchor(form, 100.0);
 
                 String discountCode;
-                while (OffWithCode.getOffByCode(discountCode = Integer.toString(new Random().nextInt(999999) + 1)) != null)
+                while (OffWithCode.getOffByCode(discountCode = Integer.toString(new Random().nextInt(899999) + 100000)) != null)
                     ;
 
                 Text code = new Text("generated code:");
@@ -591,6 +761,8 @@ public class ManagerPanel extends Menu {
                         }
                         new OffWithCode(codeValue.getText(), startDatePick.getValue().atStartOfDay(), endDatePick.getValue().atStartOfDay(),
                                 Integer.parseInt(percentField.getText()), Float.parseFloat(maxField.getText()), Integer.parseInt(usageField.getText()), buyers);
+
+                        new Alert(Alert.AlertType.INFORMATION,"discount successfully added");
                         App.getMainStage().setScene(new ManagerPanel(new ScrollPane()));
                     }
                 });
@@ -603,50 +775,50 @@ public class ManagerPanel extends Menu {
         };
     }
 
-    public Menu manageDiscounts(){
+    public Menu manageDiscounts() {
         return new Menu(new ScrollPane()) {
             @Override
             public void init() {
-                TableView<OffWithCode> discounts=new TableView<>();
+                TableView<OffWithCode> discounts = new TableView<>();
 
-                ObservableList<OffWithCode> codes=FXCollections.observableArrayList();
+                ObservableList<OffWithCode> codes = FXCollections.observableArrayList();
                 codes.addAll(OffWithCode.getAllDiscounts());
 
                 discounts.setItems(codes);
 
-                TableColumn<OffWithCode,String> code=new TableColumn<>("code");
+                TableColumn<OffWithCode, String> code = new TableColumn<>("code");
                 code.setCellValueFactory(new PropertyValueFactory<>("offCode"));
 
-                TableColumn<OffWithCode, LocalDateTime> startTime=new TableColumn<>("start date");
-                startTime.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+                TableColumn<OffWithCode, String> startTime = new TableColumn<>("start date");
+                startTime.setCellValueFactory(new PropertyValueFactory<>("formattedStartDate"));
 
-                TableColumn<OffWithCode,LocalDateTime> stopTime=new TableColumn<>("stop date");
-                stopTime.setCellValueFactory(new PropertyValueFactory<>("stopDate"));
+                TableColumn<OffWithCode, String> stopTime = new TableColumn<>("stop date");
+                stopTime.setCellValueFactory(new PropertyValueFactory<>("formattedStopDate"));
 
-                AnchorPane.setLeftAnchor(discounts,300.0);
+                AnchorPane.setLeftAnchor(discounts, 300.0);
 
-                discounts.getColumns().addAll(code,startTime,stopTime);
+                discounts.getColumns().addAll(code, startTime, stopTime);
 
-                HBox buttons=new HBox();
+                HBox buttons = new HBox();
                 buttons.setSpacing(10);
 
-                Button back=new Button("return");
+                Button back = new Button("return");
                 back.setOnAction(event -> App.getMainStage().setScene(new ManagerPanel(new ScrollPane())));
 
-                Button delete=new Button("delete");
+                Button delete = new Button("delete");
                 delete.setOnAction(event -> deleteDiscount(discounts.getSelectionModel().getSelectedItem()));
 
-                Button edit=new Button("edit");
-                edit.setOnAction(event ->  App.getMainStage().setScene(editDiscount(discounts.getSelectionModel().getSelectedItem())));
+                Button edit = new Button("edit");
+                edit.setOnAction(event -> App.getMainStage().setScene(editDiscount(discounts.getSelectionModel().getSelectedItem())));
 
-                buttons.getChildren().addAll(back,delete,edit);
+                buttons.getChildren().addAll(back, delete, edit);
 
-                pane.getChildren().addAll(buttons,discounts);
+                pane.getChildren().addAll(buttons, discounts);
             }
         };
     }
 
-    public Menu editDiscount(OffWithCode discount){
+    public Menu editDiscount(OffWithCode discount) {
         return new Menu(new ScrollPane()) {
             @Override
             public void init() {
@@ -754,7 +926,7 @@ public class ManagerPanel extends Menu {
 
                 VBox userChoices = new VBox();
 
-                for (Buyer buyer:discount.getApplyingAccounts().keySet()){
+                for (Buyer buyer : discount.getApplyingAccounts().keySet()) {
                     ChoiceBox<Buyer> userList = new ChoiceBox();
                     userList.setItems(observableList);
                     userList.setValue(buyer);
@@ -802,8 +974,21 @@ public class ManagerPanel extends Menu {
                         for (int i = 0; i < userChoices.getChildren().size(); i++) {
                             buyers.add(((ChoiceBox<Buyer>) userChoices.getChildren().get(i)).getSelectionModel().getSelectedItem());
                         }
-                        //todo apply edits
-                        App.getMainStage().setScene(new ManagerPanel(new ScrollPane()));
+                        discount.setOffAmount(Integer.parseInt(percentField.getText()));
+                        discount.setMaxAmount(Float.parseFloat(maxField.getText()));
+                        discount.setNumberOfUsesOfCode(Integer.parseInt(usageField.getText()));
+                        discount.setStartDate(startDatePick.getValue().atStartOfDay());
+                        discount.setStopDate(endDatePick.getValue().atStartOfDay());
+
+                        ArrayList<Buyer> chosenBuyers=new ArrayList<>();
+
+                        for(Node choice:userChoices.getChildren()){
+                            chosenBuyers.add(((ChoiceBox<Buyer>)choice).getSelectionModel().getSelectedItem());
+                        }
+                        discount.setApplyingAccounts(chosenBuyers);
+
+                        new Alert(Alert.AlertType.INFORMATION,"discount successfully edited");
+                        App.getMainStage().setScene(manageDiscounts());
                     }
                 });
                 form.add(ok, 1, 8);
@@ -815,9 +1000,47 @@ public class ManagerPanel extends Menu {
         };
     }
 
-    public void deleteDiscount(OffWithCode discount){
-       OffWithCode.deleteDiscount(discount);
-       App.getMainStage().setScene(manageDiscounts());
+    public void deleteDiscount(OffWithCode discount) {
+        OffWithCode.deleteDiscount(discount);
+        App.getMainStage().setScene(manageDiscounts());
+    }
+
+    public Menu manageRequests() {
+        return new Menu(new ScrollPane()) {
+            @Override
+            public void init() {
+                TableView<Request> requestTable = new TableView<>();
+                requestTable.setItems(FXCollections.observableArrayList(Request.getAllRequests()));
+                pane.getChildren().add(requestTable);
+
+                AnchorPane.setTopAnchor(requestTable, 100.0);
+                AnchorPane.setLeftAnchor(requestTable, 300.0);
+
+                TableColumn<Request, String> typeColumn = new TableColumn<>("type");
+                typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+
+                TableColumn<Request, String> dateColumn = new TableColumn<>("send time");
+                dateColumn.setCellValueFactory(new PropertyValueFactory<>("dateTime"));
+
+                requestTable.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        App.getMainStage().setScene(new RequestPanel(new ScrollPane(), requestTable.getSelectionModel().getSelectedItem()));
+                    }
+                });
+
+                requestTable.getColumns().addAll(typeColumn, dateColumn);
+
+                Button back = new Button("return");
+                back.setOnAction(event -> App.getMainStage().setScene(new ManagerPanel(new ScrollPane())));
+                pane.getChildren().add(back);
+
+            }
+        };
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
 }

@@ -1,6 +1,9 @@
 package Model;
 
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Random;
@@ -12,44 +15,23 @@ public class ProductEditRequest extends Request {
     private Category category;
     private boolean existence;
     private String explanation;
+    private Image picture;
 
-
-    public ProductEditRequest(Product product, Seller sender) {
-        this.product = product;
+    public ProductEditRequest(Seller sender, Product product, float price, Category category, HashMap<String, String> specialAttributes, String explanation, Image picture) {
+        this.product=product;
         this.sender = sender;
-        this.price = product.getPrice();
-        this.price = product.getPrice();
-        this.category = product.getCategory();
-        this.existence = product.getExistence();
-        this.explanation = product.getExplanation();
-        this.requestedChange = product.getSpecialAttributes();
-        this.dateTime = LocalDateTime.now();
+        this.price = price;
+        this.category = category;
+        this.requestedChange = specialAttributes;
+        this.explanation=explanation;
+        this.dateTime= LocalDateTime.now();
+        this.picture=picture;
         Random random = new Random();
         while (getRequestsById(this.id = Integer.toString(random.nextInt())) != null) ;
         allRequests.add(this);
     }
 
-    public void changePrice(float price) {
-        this.price = price;
-    }
 
-    public void changeCategory(Category category, HashMap<String, String> newAttributes) {
-        this.category = category;
-        this.requestedChange.clear();
-        this.requestedChange.putAll(newAttributes);
-    }
-
-    public void changeExistence(boolean existence) {
-        this.existence = existence;
-    }
-
-    public void changeRequestedChanges(String field, String value) {
-        requestedChange.put(field, value);
-    }
-
-    public void changeExplanation(String explanation) {
-        this.explanation = explanation;
-    }
 
     @Override
     public void acceptRequest() {
@@ -58,37 +40,43 @@ public class ProductEditRequest extends Request {
         product.setPrice(price);
         product.setExplanation(explanation);
         product.getSpecialAttributes().putAll(requestedChange);
+        product.setPicture(picture);
         allRequests.remove(this);
 
     }
 
-    @Override
-    public String showRequestDetails() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("before change:\n");
-        stringBuilder.append("category: "+product.getCategory().getName() + "\nprice: " + product.getPrice());
-        stringBuilder.append("\nstate: ");
-        if (product.getExistence())stringBuilder.append("available");
-        else stringBuilder.append("unavailable");
-        stringBuilder.append('\n'+product.getExplanation());
-        for (String attribute:product.getSpecialAttributes().keySet()){
-            stringBuilder.append('\n'+attribute+": "+product.getSpecialAttributes().get(attribute));
-        }
-        stringBuilder.append("after change:\n");
-        stringBuilder.append("category: "+category.getName() + "\nprice: " + price);
-        stringBuilder.append("\nstate: ");
-        if (existence)stringBuilder.append("available");
-        else stringBuilder.append("unavailable");
-        stringBuilder.append('\n'+explanation);
-        for (String attribute:requestedChange.keySet()){
-            stringBuilder.append('\n'+attribute+": "+requestedChange.get(attribute));
-        }
-        return stringBuilder.toString();
-    }
 
     @Override
     public void declineRequest() {
         allRequests.remove(this);
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public ImageView getPicture() {
+        return new ImageView(picture);
+    }
+
+    public HashMap<String, String> getRequestedChange() {
+        return requestedChange;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public boolean isExistence() {
+        return existence;
+    }
+
+    public String getExplanation() {
+        return explanation;
     }
 
     @Override

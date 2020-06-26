@@ -42,17 +42,23 @@ public class OffAdditionRequest extends Request {
         return id + " " + sender + " has requested to add off " + offId;
     }
 
-    @Override
-    public String showRequestDetails() {
-       StringBuilder stringBuilder=new StringBuilder();
-       stringBuilder.append(toString());
-       stringBuilder.append("\noff percent: "+offAmount);
-       stringBuilder.append("\nstart date: "+startDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
-       stringBuilder.append("\nend date: "+stopDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
-       stringBuilder.append("\nlist of products:");
-       for (Product product:productsArray){
-           stringBuilder.append('\n'+product.getProductId()+" "+product.getSpecialAttributes().get("name"));
-       }
-       return stringBuilder.toString();
+    public String getOffId() {
+        return offId;
+    }
+
+    public ArrayList<Product> getProductsArray() {
+        return productsArray;
+    }
+
+    public String getStartDate() {
+        return startDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    }
+
+    public String getStopDate() {
+        return stopDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    }
+
+    public int getOffAmount() {
+        return offAmount;
     }
 }

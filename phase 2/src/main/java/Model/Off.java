@@ -1,6 +1,8 @@
 package Model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -13,6 +15,7 @@ public class Off {
     private LocalDateTime stopDate;
     private int offAmount;
     private boolean active;
+    private String remainedTime;
 
     public Off(String offId, ArrayList<Product> productsArray, LocalDateTime startDate, LocalDateTime stopDate, int offAmount,Seller seller) {
         this.offId = offId;
@@ -27,6 +30,8 @@ public class Off {
         for (Product product:productsArray){
             product.setAssignedOff(this);
         }
+
+        startCountdown();
     }
 
     public static Off getOffById(String id) {
@@ -80,6 +85,18 @@ public class Off {
         return stopDate;
     }
 
+    public String getFormattedStartDate(){
+        return startDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    }
+
+    public String getFormattedStopDate(){
+        return stopDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    }
+
+    public String getRemainedTime() {
+        return remainedTime;
+    }
+
     public boolean isActive() {
         return active;
     }
@@ -98,6 +115,34 @@ public class Off {
 
     public void setOffAmount(int offAmount) {
         this.offAmount = offAmount;
+    }
+
+    public void startCountdown(){
+        Off off=this;
+        new Thread(){
+            @Override
+            public void run() {
+                long lastUpdate=0;
+                long now;
+                LocalDateTime fromDateTime=LocalDateTime.from(startDate);
+                while (LocalDateTime.now().isAfter(stopDate)){
+                    now=System.currentTimeMillis();
+                    if (now-lastUpdate>=500){
+                        lastUpdate=now;
+                        long day=fromDateTime.until(stopDate, ChronoUnit.DAYS);
+                        long hour=fromDateTime.until(stopDate,ChronoUnit.HOURS);
+                        long minute=fromDateTime.until(stopDate,ChronoUnit.MINUTES);
+                        long second=fromDateTime.until(stopDate,ChronoUnit.SECONDS);
+                        remainedTime=day+" days and "+hour+":"+minute+":"+second;
+                    }
+                }
+                offArray.remove(off);
+                for (Product product:off.getProductsArray()){
+                    product.setAssignedOff(null);
+                }
+                off.seller.getSellerOffs().remove(off);
+            }
+        }.start();
     }
 
     @Override

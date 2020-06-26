@@ -1,5 +1,8 @@
 package Model;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,21 +10,24 @@ import java.util.HashMap;
 public class Product {
     private static ArrayList<Product> allProducts = new ArrayList<Product>();
     private Seller seller;
-    Category category;
+    private String name;
+    private Category category;
     private String explanation;
     private float averageScore;
     private String productId;
     private float price;
     private int views;
-    private ArrayList<Comments> comments = new ArrayList<>();
+    private ArrayList<Comment> comments = new ArrayList<>();
     private HashMap<String, String> specialAttributes = new HashMap<>();
     private ArrayList<Buyer> listOfBuyers = new ArrayList<>();
     private Boolean existence;
     private Off assignedOff;
     private float priceAfterOff;
     private LocalDateTime creationDate;
+    private ImageView picture;
 
-    public Product(String productId, float price, Category category, HashMap specialAttributes, String explanation, Seller seller) {
+    public Product(String productId, float price, Category category, HashMap<String,String> specialAttributes, String explanation, Seller seller, Image picture) {
+        this.name=specialAttributes.get("name");
         this.productId = productId;
         this.price = price;
         this.category = category;
@@ -30,7 +36,7 @@ public class Product {
         this.creationDate = LocalDateTime.now();
         this.explanation = explanation;
         this.seller = seller;
-        seller.getArrayProduct().add(this);
+        this.picture=new ImageView(picture);
         allProducts.add(this);
     }
 
@@ -83,6 +89,10 @@ public class Product {
         return productId;
     }
 
+    public String getBrand() {
+        return specialAttributes.get("brand");
+    }
+
     public int getViews() {
         return views;
     }
@@ -111,12 +121,16 @@ public class Product {
         return priceAfterOff;
     }
 
-    public ArrayList<Comments> getComments() {
+    public ArrayList<Comment> getComments() {
         return comments;
     }
 
     public Category getCategory() {
         return category;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setCategory(Category category) {
@@ -144,6 +158,14 @@ public class Product {
         this.setPriceAfterOff();
     }
 
+    public ImageView getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Image picture) {
+        this.picture.setImage(picture);
+    }
+
     public ArrayList<Buyer> getListOfBuyers() {
         return listOfBuyers;
     }
@@ -154,6 +176,14 @@ public class Product {
 
     public void setAverageScore(float averageScore) {
         this.averageScore = averageScore;
+    }
+
+    public String getRemainedTime(){
+        return this.assignedOff.getRemainedTime();
+    }
+
+    public int getOffPercent(){
+        return this.assignedOff.getOffAmount();
     }
 
     public static void compare2Products(Product product1,Product product2) {

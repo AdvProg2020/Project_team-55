@@ -2,6 +2,11 @@ package Model;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import javafx.scene.control.ScrollPane;
+import org.example.App;
+import org.menu.BuyerPanel;
+import org.menu.MainPage;
+import org.menu.RegisterMenu;
 
 import javax.jws.soap.SOAPBinding;
 import java.io.*;
@@ -11,7 +16,7 @@ public class DataLoader {
     private Gson gson=builder.create();
 
     public static void readData() throws IOException{
-        File dir=new File("buyers.json");
+        File dir=new File("mainManager.json");
         if (dir.exists()) {
             DataLoader loader = new DataLoader();
             loader.readUsers();
@@ -22,6 +27,10 @@ public class DataLoader {
             loader.readRequests();
             loader.readLogs();
             loader.readScore();
+            App.getMainStage().setScene(new MainPage(new ScrollPane()));
+        }else {
+            App.getMainStage().setScene(new RegisterMenu(new ScrollPane()).submitManager());
+           // App.getMainStage().setScene(new BuyerPanel(new ScrollPane()));
         }
     }
 
@@ -34,15 +43,20 @@ public class DataLoader {
         Buyer buyer;Seller seller;Manager manager;
 
         while ((buyer=gson.fromJson(buyerReader,Buyer.class))!=null){
+            Buyer.getAllBuyers().add(buyer);
                 User.getUsers().add(buyer);
         }
         while ((seller=gson.fromJson(sellerReader,Seller.class))!=null){
+            Seller.getAllSellers().add(seller);
             User.getUsers().add(seller);
         }
         while ((manager=gson.fromJson(managerReader,Manager.class))!=null){
+            Manager.getSubManagers().add(manager);
             User.getUsers().add(manager);
         }
         Manager.setMainManager(gson.fromJson(mainManager,Manager.class));
+        User.getUsers().add(gson.fromJson(mainManager,Manager.class));
+
         buyerReader.close();
         sellerReader.close();
         managerReader.close();
@@ -98,12 +112,6 @@ public class DataLoader {
             Request.getAllRequests().add(PERequest);
         }
         productEditReader.close();
-        BufferedReader productRemovalReader=new BufferedReader(new FileReader("productRemovalRequests.json"));
-        ProductRemovalRequest PRRequest;
-        while ((PRRequest=gson.fromJson(productRemovalReader,ProductRemovalRequest.class))!=null){
-            Request.getAllRequests().add(PRRequest);
-        }
-        productRemovalReader.close();
         BufferedReader offAddReader=new BufferedReader(new FileReader("offAdditionRequests.json"));
         OffAdditionRequest OARequest;
         while ((OARequest=gson.fromJson(offAddReader,OffAdditionRequest.class))!=null){

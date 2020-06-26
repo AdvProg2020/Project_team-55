@@ -3,6 +3,7 @@ package Model;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.CheckBox;
+import javafx.scene.image.Image;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -19,14 +20,16 @@ public abstract class User implements Serializable {
     protected String password;
     protected float credit;
     protected CheckBox select;
+    protected Image profile;
 
-    public User(String userName, String firstName, String lastName, String email, String phoneNumber, String password){
+    public User(String userName, String firstName, String lastName, String email, String phoneNumber, String password,Image profile){
         this.username=userName;
         this.firstName=firstName;
         this.lastName=lastName;
         this.email=email;
         this.phoneNumber=phoneNumber;
         this.password=password;
+        this.profile=profile;
         select=new CheckBox();
         users.add(this);
     }
@@ -102,6 +105,14 @@ public abstract class User implements Serializable {
 
     public CheckBox getSelect() {
         return select;
+    }
+
+    public Image getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Image profile) {
+        this.profile = profile;
     }
 
     public void setSelect(CheckBox select) {

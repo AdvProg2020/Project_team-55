@@ -1,16 +1,17 @@
 package Model;
 
 import javafx.beans.property.StringProperty;
+import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Manager extends User {
     private static Manager mainManager;
-    private LinkedList<Manager> subManagers;
+    private static LinkedList<Manager> subManagers=new LinkedList<>();
 
-    public Manager(String userName, String firstName, String lastName, String email, String phoneNumber, String password) {
-        super(userName,firstName,lastName,email,phoneNumber,password);
+    public Manager(String userName, String firstName, String lastName, String email, String phoneNumber, String password, Image profile) {
+        super(userName,firstName,lastName,email,phoneNumber,password,profile);
         if (mainManager==null)mainManager=this;
         else subManagers.add(this);
     }
@@ -21,6 +22,10 @@ public class Manager extends User {
 
     public static void setMainManager(Manager mainManager) {
         Manager.mainManager = mainManager;
+    }
+
+    public static LinkedList<Manager> getSubManagers() {
+        return subManagers;
     }
 
     @Override

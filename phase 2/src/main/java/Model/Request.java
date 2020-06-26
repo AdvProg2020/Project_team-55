@@ -30,8 +30,6 @@ public abstract class Request {
 
     public abstract void acceptRequest();
 
-    public abstract String showRequestDetails();
-
     public abstract void declineRequest();
 
     public String getDateTime(){
@@ -44,5 +42,9 @@ public abstract class Request {
 
     public String getId() {
         return id;
+    }
+
+    public String getType(){
+        return getClass().getSimpleName();
     }
 }

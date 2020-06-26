@@ -1,17 +1,30 @@
-.command{
+.command {
     -fx-text-alignment: center;
     -fx-background-color: #bdf9ff;
     -fx-border-radius: 4;
     -fx-font-size: 18;
     -fx-border-color: #575757;
 }
-.command:hover{
+
+.command:hover {
     -fx-background-color: #4bc1cd;
 }
-.root{
-    -fx-background-color: white;
-}
-.info-grid{
+
+.info-grid {
     -fx-text-alignment: center;
     -fx-font-size: 16;
+}
+
+
+
+.label {
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff0000;
+}
+.pane{
+    -fx-background-image: url("bloody_background.jpg");
+}
+.navbar{
+    -fx-background-color: #a0cba9;
 }

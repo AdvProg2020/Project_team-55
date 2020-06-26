@@ -1,15 +1,15 @@
 package Model;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Cart {
-    private HashMap<Product, Integer> cartItems = new HashMap<>();
+    private ArrayList<CartItem> cartItems = new ArrayList<>();
 
     public Cart(Buyer buyer) {
         buyer.setCart(this);
     }
 
-    public HashMap<Product, Integer> getCartItems() {
+    public ArrayList<CartItem> getCartItems() {
         return cartItems;
     }
 
@@ -17,11 +17,12 @@ public class Cart {
         Off.updateOffs();
         float sum = 0;
         if (!cartItems.isEmpty()) {
-            for (Product product : cartItems.keySet()) {
+            for (CartItem item : cartItems) {
+                Product product = item.getItem();
                 if (product.getAssignedOff() == null) {
-                    sum += product.getPrice() * cartItems.get(product);
+                    sum += product.getPrice() * item.getQuantity();
                 } else {
-                    sum += product.getPriceAfterOff() * cartItems.get(product);
+                    sum += product.getPriceAfterOff() * item.getQuantity();
                 }
             }
             return sum;
