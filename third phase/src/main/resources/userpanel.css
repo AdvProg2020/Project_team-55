@@ -1,0 +1,38 @@
+.command {
+    -fx-text-alignment: center;
+    -fx-background-color: #bdf9ff;
+    -fx-border-radius: 4;
+    -fx-font-size: 18;
+    -fx-border-color: #575757;
+}
+
+.command:hover {
+    -fx-background-color: #4bc1cd;
+}
+
+.info-grid {
+    -fx-text-alignment: center;
+    -fx-font-size: 16;
+}
+
+@font-face {
+    font-family: "caspa";
+    src: url("Casper.ttf");
+}
+
+
+.label {
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff0000;
+}
+
+.pane {
+    -fx-background-image: url("wallpaperflare.com_wallpaper.jpg");
+    -fx-background-size: cover;
+    -fx-background-repeat: inherit;
+}
+
+.navbar {
+    -fx-background-color: #a0cba9;
+}
