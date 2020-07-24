@@ -1,0 +1,64 @@
+package Model;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Random;
+
+public class OffAdditionRequest extends Request {
+    private final String offId;
+    private ArrayList<Product> productsArray = new ArrayList<>();
+    private final LocalDateTime startDate;
+    private final LocalDateTime stopDate;
+    private final int offAmount;
+
+    public OffAdditionRequest(Seller sender, String offId, ArrayList<Product> productsArray, LocalDateTime startDate, LocalDateTime stopDate, int offAmount) {
+        this.offId = offId;
+        this.sender = sender;
+        this.productsArray = productsArray;
+        this.startDate = startDate;
+        this.stopDate = stopDate;
+        this.offAmount = offAmount;
+        this.dateTime= LocalDateTime.now();
+        Random random = new Random();
+        while (getRequestsById(this.id = Integer.toString(random.nextInt())) != null) ;
+        allRequests.add(this);
+    }
+
+    @Override
+    public void acceptRequest() {
+        new Off(offId, productsArray, startDate, stopDate, offAmount,sender);
+        allRequests.remove(this);
+    }
+
+
+    @Override
+    public void declineRequest() {
+        allRequests.remove(this);
+    }
+
+    @Override
+    public String toString() {
+        return id + " " + sender + " has requested to add off " + offId;
+    }
+
+    public String getOffId() {
+        return offId;
+    }
+
+    public ArrayList<Product> getProductsArray() {
+        return productsArray;
+    }
+
+    public String getStartDate() {
+        return startDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    }
+
+    public String getStopDate() {
+        return stopDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    }
+
+    public int getOffAmount() {
+        return offAmount;
+    }
+}
